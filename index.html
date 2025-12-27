@@ -266,19 +266,19 @@
                 <div class="action-grid">
                     <button class="btn" onclick="game.action('feed')">
                         🍖 Feed
-                        <span>-10 pts</span>
+                        <span>-20 pts</span>
                     </button>
                     <button class="btn" onclick="game.action('bathe')">
                         🛁 Bath
-                        <span>-10 pts</span>
+                        <span>-30 pts</span>
                     </button>
                     <button class="btn" onclick="game.action('play')">
                         ⚽ Play
-                        <span>-15 pts</span>
+                        <span>-50 pts</span>
                     </button>
                     <button class="btn" onclick="game.action('study')">
                         📚 Study
-                        <span>-20 pts</span>
+                        <span>-30 pts</span>
                     </button>
                 </div>
                 <button class="btn btn-lottery" id="btn-lottery" onclick="game.playLottery()">
@@ -334,7 +334,7 @@ const CONSTANTS = {
         feed: { cost: 20, stat: 'hunger', amount: 5, anim: 'eating', duration: 2000, msg: "Yummy!" },
         bathe: { cost: 30, stat: 'hygiene', amount: 10, anim: 'washing', duration: 2500, msg: "So fresh!" },
         play: { cost: 50, stat: 'mood', amount: 20, anim: 'playing', duration: 2000, msg: "So fun!" },
-        study: { cost: 60, stat: 'knowledge', amount: 30, anim: 'studying', duration: 3000, msg: "Big brain!" }
+        study: { cost: 30, stat: 'knowledge', amount: 30, anim: 'studying', duration: 3000, msg: "Big brain!" }
     }
 };
 
