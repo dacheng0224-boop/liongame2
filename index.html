@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Blue Lion Pet</title>
+    <style>
+        :root {
+            --primary-blue: #4A90E2;
+            --secondary-blue: #DEEAF6;
+            --accent-orange: #FF9F43;
+            --text-color: #2C3E50;
+            --danger-red: #FF6B6B;
+            --success-green: #1DD1A1;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--secondary-blue);
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            transition: background-image 1s ease;
+            color: var(--text-color);
+        }
+
+        /* --- UI: Header & Stats --- */
+        .header {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .points-display {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-bg {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: var(--success-green);
+            border-radius: 4px;
+            transition: width 0.5s ease, background-color 0.5s ease;
+        }
+
+        /* --- Main Stage (The Lion) --- */
+        .stage {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #pet-image {
+            max-width: 80%;
+            max-height: 60vh;
+            /* Critical for mobile game feel */
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+        }
+
+        #pet-image:active {
+            transform: scale(0.95);
+        }
+
+        /* Floating Feedback Text */
+        .floater {
+            position: absolute;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: floatUp 1s forwards;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+
+        /* --- Controls --- */
+        .controls {
+            padding: 15px;
+            background: white;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .btn {
+            background: white;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 10px 5px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            min-height: 70px;
+        }
+
+        .btn i { font-size: 1.2rem; margin-bottom: 4px; }
+        .btn span { font-size: 0.7rem; opacity: 0.8; }
+
+        .btn:active {
+            background: var(--primary-blue);
+            color: white;
+            transform: scale(0.95);
+        }
+
+        .btn-lottery {
+            background: linear-gradient(135deg, #FF9F43, #FF6B6B);
+            border: none;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-lottery:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Message Log */
+        #message-log {
+            font-size: 0.9rem;
+            text-align: center;
+            height: 20px;
+            color: #666;
+            margin-top: -5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Stats -->
+    <div class="header">
+        <div class="points-display">
+            💎 <span id="score-val">0</span> Points
+        </div>
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-label"><span>Hunger</span><span id="val-hunger">100%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-hunger"></div></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label"><span>Hygiene</span><span id="val-hygiene">100%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-hygiene"></div></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label"><span>Mood</span><span id="val-mood">100%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-mood"></div></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label"><span>Knowledge</span><span id="val-knowledge">100%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-knowledge"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Stage -->
+    <div class="stage" id="stage-area">
+        <!-- 
+           The src is set by JS. 
+           We use a transparent placeholder initially.
+        -->
+        <img id="pet-image" src="" alt="Blue Lion" draggable="false" />
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div id="message-log">Welcome back!</div>
+        
+        <div class="action-grid">
+            <button class="btn" onclick="game.action('feed')">
+                🍖 Feed
+                <span>-10 pts</span>
+            </button>
+            <button class="btn" onclick="game.action('bathe')">
+                🛁 Bath
+                <span>-10 pts</span>
+            </button>
+            <button class="btn" onclick="game.action('play')">
+                ⚽ Play
+                <span>-15 pts</span>
+            </button>
+            <button class="btn" onclick="game.action('study')">
+                📚 Study
+                <span>-20 pts</span>
+            </button>
+        </div>
+
+        <button class="btn btn-lottery" id="btn-lottery" onclick="game.playLottery()">
+            🎁 Lucky Draw
+        </button>
+    </div>
+
+<script>
+/**
+ * =========================================================
+ * 1. ASSET CONFIGURATION
+ * REPLACE THESE URLS WITH YOUR ACTUAL GIF/IMAGE URLS
+ * =========================================================
+ */
+const ASSETS = {
+    // STATE GIFs (Loops)
+    // Using placeholders with text for clarity. Replace with your .gif files.
+    idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_0932da40-1ec4-4b08-bcaf-50059a9c590g.png",
+    sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_9b704086-4791-4fff-95be-6c2c971fbabg.png",
+
+    // ACTION GIFs (Ideally play once)
+    eating: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_9543bbce-ed49-4777-9fb2-4d91534f24ag.png",
+    washing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_d1f68a54-329c-4c1c-bcfb-13a1155426fg.png",
+    playing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_f26f3834-3bd3-4185-bf9f-a367151d6edg.png",
+    studying: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_e7dbbdda-9662-417c-8a99-1e61a5e6ff7g.png",
+    touch: " https://cos-cdn.kk6277.com/feishu/img_v3_02tc_8714e8cd-a493-4910-a879-a711ce2fcffg.png",
+
+    // Backgrounds
+    bg_day: "linear-gradient(to bottom, #87CEEB, #E0F6FF)", 
+    bg_night: "linear-gradient(to bottom, #0F2027, #203A43)"
+};
+
+/**
+ * =========================================================
+ * 2. GAME LOGIC & STATE
+ * =========================================================
+ */
+
+const CONSTANTS = {
+    DECAY_RATE_MS: 3000,    // Stats decrease every 3 seconds
+    PASSIVE_INCOME_MS: 60000, // Points every 1 minute
+    LOTTERY_COOLDOWN: 5 * 60 * 1000, // 5 minutes
+    
+    // Action Config
+    ACTIONS: {
+        feed: { cost: 10, stat: 'hunger', amount: 30, anim: 'eating', duration: 2000, msg: "Yummy!" },
+        bathe: { cost: 10, stat: 'hygiene', amount: 40, anim: 'washing', duration: 2500, msg: "So fresh!" },
+        play: { cost: 15, stat: 'mood', amount: 25, anim: 'playing', duration: 2000, msg: "So fun!" },
+        study: { cost: 20, stat: 'knowledge', amount: 20, anim: 'studying', duration: 3000, msg: "Big brain!" }
+    }
+};
+
+class Game {
+    constructor() {
+        // Initial State
+        this.state = {
+            stats: { hunger: 80, hygiene: 80, mood: 80, knowledge: 80 },
+            points: 100, // Starting points
+            lastLottery: 0,
+            lastSave: Date.now()
+        };
+
+        this.animTimer = null; // Handles animation interruption
+        this.isSad = false;
+    }
+
+    // --- Initialization ---
+    init() {
+        this.loadData();
+        this.preloadImages();
+        this.setupEventListeners();
+        this.setupTimers();
+        this.render();
+        this.setPetState('idle');
+        this.checkBackground();
+    }
+
+    preloadImages() {
+        // Preload all assets to prevent flickering
+        Object.values(ASSETS).forEach(src => {
+            if(!src.startsWith('linear-gradient')) {
+                const img = new Image();
+                img.src = src;
+            }
+        });
+    }
+
+    // --- Animation Engine (The Core Requirement) ---
+    setPetState(stateKey, duration = 0) {
+        const petImg = document.getElementById('pet-image');
+        
+        // 1. Determine Logic based on Stats
+        let targetImage = ASSETS[stateKey];
+        
+        // If we are trying to go IDLE, but stats are low, force SAD
+        if (stateKey === 'idle' && this.checkLowStats()) {
+            targetImage = ASSETS.sad;
+            this.isSad = true;
+        } else {
+            this.isSad = false;
+        }
+
+        // 2. Set the Image
+        petImg.src = targetImage;
+
+        // 3. Handle Duration (Action -> Idle)
+        // If there is an existing timer from a previous action, clear it (Interruption logic)
+        if (this.animTimer) clearTimeout(this.animTimer);
+
+        if (duration > 0) {
+            this.animTimer = setTimeout(() => {
+                this.setPetState('idle'); // Revert to idle/sad loop
+                this.animTimer = null;
+            }, duration);
+        }
+    }
+
+    checkLowStats() {
+        // Returns true if any stat is below 30
+        const s = this.state.stats;
+        return (s.hunger < 30 || s.hygiene < 30 || s.mood < 30 || s.knowledge < 30);
+    }
+
+    // --- Interactions ---
+    action(type) {
+        const cfg = CONSTANTS.ACTIONS[type];
+        
+        // 1. Check Cost
+        if (this.state.points < cfg.cost) {
+            this.showToast("Not enough points! 😢");
+            this.playSound('error');
+            return;
+        }
+
+        // 2. Consume Points
+        this.state.points -= cfg.cost;
+
+        // 3. Boost Stat
+        this.state.stats[cfg.stat] = Math.min(100, this.state.stats[cfg.stat] + cfg.amount);
+
+        // 4. Trigger Animation & Sound
+        this.setPetState(cfg.anim, cfg.duration);
+        this.playSound(type);
+        this.log(cfg.msg);
+        this.showToast(`-${cfg.cost} Pts`);
+
+        this.render();
+        this.saveData();
+    }
+
+    handleTouch(e) {
+        // Prevent double firing on some devices
+        e.preventDefault(); 
+        
+        // Add Points
+        this.state.points += 1;
+        
+        // Visuals
+        this.setPetState('touch', 1000);
+        this.showToast("+1 Point ❤️", e.clientX, e.clientY);
+        this.playSound('touch');
+        
+        this.render();
+    }
+
+    playLottery() {
+        const now = Date.now();
+        const diff = now - this.state.lastLottery;
+        
+        if (diff < CONSTANTS.LOTTERY_COOLDOWN) {
+            const minLeft = Math.ceil((CONSTANTS.LOTTERY_COOLDOWN - diff) / 60000);
+            this.showToast(`Wait ${minLeft} mins! ⏳`);
+            return;
+        }
+
+        // Weighted RNG
+        const rand = Math.random();
+        let reward = 100;
+        let msg = "Small Prize!";
+
+        if (rand > 0.95) { reward = 5000; msg = "JACKPOT!! 🌟"; }
+        else if (rand > 0.80) { reward = 1000; msg = "Big Win! 🎉"; }
+        else if (rand > 0.50) { reward = 500; msg = "Nice! 👍"; }
+
+        this.state.points += reward;
+        this.state.lastLottery = now;
+        
+        alert(`🎁 ${msg}\nYou won ${reward} points!`);
+        this.render();
+        this.saveData();
+    }
+
+    // --- Game Loop & System ---
+    setupTimers() {
+        // Decay Logic (Hunger/Hygiene drops)
+        setInterval(() => {
+            const s = this.state.stats;
+            // Decrease values, keep at min 0
+            s.hunger = Math.max(0, s.hunger - 1);
+            s.hygiene = Math.max(0, s.hygiene - 1);
+            s.mood = Math.max(0, s.mood - 1);
+            s.knowledge = Math.max(0, s.knowledge - 1);
+            
+            // Check for sadness update without interrupting actions
+            if (!this.animTimer && this.checkLowStats() !== this.isSad) {
+                this.setPetState('idle'); // Will auto-switch to sad
+            }
+            this.render();
+        }, CONSTANTS.DECAY_RATE_MS);
+
+        // Passive Income
+        setInterval(() => {
+            this.state.points += 5;
+            this.showToast("+5 Passive Pts 💰");
+            this.render();
+            this.saveData();
+        }, CONSTANTS.PASSIVE_INCOME_MS);
+
+        // Background Check (Every minute)
+        setInterval(() => this.checkBackground(), 60000);
+
+        // Auto Save
+        setInterval(() => this.saveData(), 5000);
+        
+        // Lottery Timer UI Update
+        setInterval(() => this.updateLotteryButton(), 1000);
+    }
+
+    checkBackground() {
+        const hour = new Date().getHours();
+        // Night is 8PM (20) to 6AM (6)
+        const isNight = hour >= 20 || hour < 6;
+        document.body.style.background = isNight ? ASSETS.bg_night : ASSETS.bg_day;
+    }
+
+    // --- UI Helpers ---
+    render() {
+        // Update Points
+        document.getElementById('score-val').innerText = this.state.points;
+
+        // Update Stats Bars
+        ['hunger', 'hygiene', 'mood', 'knowledge'].forEach(key => {
+            const val = this.state.stats[key];
+            const bar = document.getElementById(`bar-${key}`);
+            const text = document.getElementById(`val-${key}`);
+            
+            bar.style.width = `${val}%`;
+            text.innerText = `${val}%`;
+
+            // Color Coding
+            if(val > 60) bar.style.backgroundColor = 'var(--success-green)';
+            else if(val > 30) bar.style.backgroundColor = 'var(--accent-orange)';
+            else bar.style.backgroundColor = 'var(--danger-red)';
+        });
+    }
+
+    updateLotteryButton() {
+        const btn = document.getElementById('btn-lottery');
+        const now = Date.now();
+        const diff = now - this.state.lastLottery;
+        
+        if (diff < CONSTANTS.LOTTERY_COOLDOWN) {
+            const secLeft = Math.ceil((CONSTANTS.LOTTERY_COOLDOWN - diff) / 1000);
+            const m = Math.floor(secLeft / 60);
+            const s = secLeft % 60;
+            btn.innerText = `⏳ ${m}:${s < 10 ? '0'+s : s}`;
+            btn.disabled = true;
+        } else {
+            btn.innerText = "🎁 Lucky Draw";
+            btn.disabled = false;
+        }
+    }
+
+    showToast(text, x, y) {
+        const el = document.createElement('div');
+        el.className = 'floater';
+        el.innerText = text;
+        
+        // If x/y provided (click), use them. Else center screen.
+        if (x && y) {
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+        } else {
+            el.style.left = '50%';
+            el.style.top = '40%';
+            el.style.transform = 'translate(-50%, -50%)';
+        }
+
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1000);
+    }
+
+    log(msg) {
+        const logEl = document.getElementById('message-log');
+        logEl.style.opacity = 0;
+        setTimeout(() => {
+            logEl.innerText = msg;
+            logEl.style.opacity = 1;
+        }, 200);
+    }
+
+    playSound(type) {
+        // Dummy Sound Manager
+        console.log(`🔊 Play Sound: ${type}`);
+        // To implement real sound:
+        // const audio = new Audio(`sounds/${type}.mp3`);
+        // audio.play().catch(e => console.log("Audio needs interaction first"));
+    }
+
+    // --- Persistence ---
+    saveData() {
+        localStorage.setItem('blueLionSave', JSON.stringify(this.state));
+    }
+
+    loadData() {
+        const saved = localStorage.getItem('blueLionSave');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // Merge saved stats to current state structure (safety check)
+            this.state = { ...this.state, ...parsed };
+        }
+    }
+
+    setupEventListeners() {
+        const img = document.getElementById('pet-image');
+        // Support both click and touch
+        img.addEventListener('click', (e) => this.handleTouch(e));
+        img.addEventListener('touchstart', (e) => this.handleTouch(e.touches[0]));
+    }
+}
+
+// Start Game
+const game = new Game();
+window.onload = () => game.init();
+
+</script>
+</body>
+</html>
