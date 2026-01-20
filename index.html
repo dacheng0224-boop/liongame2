@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ramadan Lion Pet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>My Little Lion</title>
     <style>
         :root {
-            --primary-blue: #2C3E50;
-            --secondary-blue: #f0f4f8;
-            --accent-gold: #D4AF37;
-            --accent-orange: #FF9F43;
-            --text-color: #2C3E50;
-            --danger-red: #C0392B;
-            --success-green: #27ae60;
+            --primary-blue: #4A90E2;
+            --secondary-blue: #E3F2FD;
+            --accent-gold: #FFC107;
+            --accent-orange: #FF9800;
+            --text-color: #333333;
+            --danger-red: #FF5252;
+            --success-green: #4CAF50;
             --card-bg: rgba(255, 255, 255, 0.95);
         }
 
@@ -24,65 +24,114 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background-color: var(--primary-blue);
+            background-color: var(--secondary-blue);
             color: var(--text-color);
             overflow: hidden; 
         }
 
+        /* --- RTL Support --- */
+        html[dir="rtl"] body { font-family: 'Tahoma', 'Segoe UI', sans-serif; }
+
+        /* --- Global Notification Bar (Adjusted) --- */
+        #notification-bar {
+            position: absolute;
+            top: 140px; /* Above lion */
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            width: 85%;
+            background: linear-gradient(135deg, #FF9800, #FFC107);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 900;
+            pointer-events: none;
+        }
+        #notification-bar.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
         /* --- Warning Banner --- */
         #sad-warning {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
             background: var(--danger-red);
             color: white;
             text-align: center;
-            font-size: 0.85rem;
-            padding: 8px;
+            font-size: 0.8rem;
+            padding: 5px; 
+            padding-top: max(5px, env(safe-area-inset-top));
             font-weight: bold;
             display: none; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            animation: pulse 2s infinite;
             z-index: 100;
         }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
 
         /* --- Header --- */
         .header {
-            padding: 10px 15px;
+            padding: max(10px, env(safe-area-inset-top)) 15px 10px 15px;
             background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             z-index: 10;
             flex-shrink: 0;
-            border-bottom: 2px solid var(--accent-gold);
+            position: relative;
+        }
+
+        .lang-switch-container {
+            position: absolute;
+            top: max(10px, env(safe-area-inset-top));
+            right: 15px;
+            z-index: 20;
+        }
+        html[dir="rtl"] .lang-switch-container { right: auto; left: 15px; }
+
+        #lang-select {
+            appearance: none; -webkit-appearance: none;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd; border-radius: 20px;
+            padding: 4px 12px; font-size: 0.75rem; color: #555; font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); outline: none; text-align: center;
         }
 
         .top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; margin-top: 35px; 
         }
 
         .points-display { 
-            font-size: 1.2rem; font-weight: bold; color: var(--primary-blue); 
+            font-size: 1.1rem; font-weight: 800; color: var(--primary-blue); 
             display: flex; align-items: center; gap: 5px;
+            background: #f0f8ff; padding: 6px 14px; border-radius: 20px;
+            cursor: pointer; border: 1px solid #dbeafe;
         }
+        .points-display:active { transform: scale(0.95); opacity: 0.8; }
+
         .time-display { 
-            font-size: 0.8rem; color: #555; background: #fff; 
-            padding: 3px 10px; border-radius: 15px; border: 1px solid #eee;
+            font-size: 0.9rem; color: #555; background: #fff; 
+            padding: 6px 12px; border-radius: 20px; border: 1px solid #eee;
+            font-weight: bold; font-family: monospace;
         }
 
         .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .stat-item { display: flex; flex-direction: column; gap: 2px; }
-        .stat-label { font-size: 0.75rem; display: flex; justify-content: space-between; color: #555; font-weight: 600; }
-        .progress-bar-bg { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+        .stat-item { display: flex; flex-direction: column; gap: 3px; }
+        .stat-label { font-size: 0.75rem; display: flex; justify-content: space-between; color: #555; font-weight: 700; }
+        html[dir="rtl"] .stat-label { flex-direction: row-reverse; }
+
+        .progress-bar-bg { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; direction: ltr; }
         .progress-bar-fill { height: 100%; width: 100%; background: var(--success-green); transition: width 0.5s ease; }
 
         /* --- Main Content --- */
@@ -92,67 +141,100 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start; 
-        }
-
-        /* --- NEW: Growth Bar --- */
-        .growth-container {
-            width: 90%;
-            margin: 10px auto 0;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            border-radius: 20px;
-            text-align: center;
-            color: white;
-        }
-        .growth-title {
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-        .growth-bar-bg {
-            height: 10px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-        .growth-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #FDB813, #D4AF37);
-            transition: width 0.5s ease;
-        }
-        .growth-text {
-            font-size: 0.7rem;
-            margin-top: 3px;
-            opacity: 0.9;
+            padding-bottom: 20px;
         }
 
         /* --- Stage --- */
         .stage {
             flex: 1;
-            min-height: 200px;
+            min-height: 250px;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
+            position: relative; /* Anchor for growth sidebar */
         }
 
         #pet-image {
-            max-width: 75%;
+            max-width: 70%;
             max-height: 80%;
             pointer-events: auto;
             cursor: pointer;
             transition: transform 0.1s;
-            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.2)); 
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); 
+            /* Push slightly left to make room for sidebar */
+            margin-right: 40px; 
         }
+        html[dir="rtl"] #pet-image { margin-right: 0; margin-left: 40px; }
         #pet-image:active { transform: scale(0.95); }
+
+        /* --- NEW: Vertical Growth Sidebar --- */
+        .growth-sidebar {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+        html[dir="rtl"] .growth-sidebar { right: auto; left: 20px; }
+
+        .growth-icon {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.2s;
+        }
+        .growth-icon img { width: 90%; height: 90%; object-fit: contain; }
+        
+        /* Next icon specific style */
+        .growth-icon.next { border-color: #ddd; opacity: 0.8; cursor: pointer; }
+        .growth-icon.next:active { transform: scale(0.9); }
+        
+        .growth-icon.current { border-color: var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); }
+
+        .v-bar-bg {
+            width: 12px;
+            height: 120px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+        .v-bar-fill {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%;
+            height: 0%; /* Dynamic */
+            background: linear-gradient(to top, #FF9800, #FFEB3B);
+            border-radius: 10px;
+            transition: height 0.5s ease;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.8); /* Glowing effect */
+        }
+        /* Pulse Animation for the fill */
+        .v-bar-fill::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to top, transparent, rgba(255,255,255,0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(-100%); }
+        }
 
         /* --- Floaters --- */
         .floater {
             position: absolute;
             font-weight: bold;
-            animation: floatUp 1s forwards;
+            animation: floatUp 0.8s forwards;
             pointer-events: none;
             z-index: 20;
             text-shadow: 0 0 2px white;
@@ -160,65 +242,64 @@
         }
         .floater.cost { color: var(--danger-red); font-size: 1rem; }
         .floater.gain { color: var(--success-green); font-size: 1.5rem; z-index: 25; text-shadow: 1px 1px 0px #fff; }
-        .floater.bonus { color: #FFD700; font-size: 2rem; z-index: 30; text-shadow: 0 0 10px #FF8C00; } 
+        .floater.bonus { color: #FF9800; font-size: 1.8rem; z-index: 30; text-shadow: 0 0 5px white; } 
         
         @keyframes floatUp {
-            0% { opacity: 1; transform: translate(-50%, 0); }
-            100% { opacity: 0; transform: translate(-50%, -80px); }
+            0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); }
+            50% { transform: translate(-50%, -40px) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -80px) scale(1); }
         }
 
         /* --- Collections --- */
         .collection-wrapper { padding: 0 15px; margin-bottom: 10px; flex-shrink: 0; }
         .collection-title { 
-            font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; 
-            color: #fff; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            padding-left: 5px; 
-            letter-spacing: 0.5px;
+            font-size: 0.9rem; font-weight: 800; margin-bottom: 10px; 
+            color: #555; padding-left: 5px; 
         }
+        html[dir="rtl"] .collection-title { padding-left: 0; padding-right: 5px; }
+
         .collection-grid {
-            display: flex; gap: 10px; overflow-x: auto; padding: 5px; padding-bottom: 10px;
+            display: flex; gap: 12px; overflow-x: auto; padding: 5px; padding-bottom: 15px;
             -ms-overflow-style: none; scrollbar-width: none;  
         }
         .collection-grid::-webkit-scrollbar { display: none; }
 
         .collect-item {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px; padding: 6px; min-width: 75px;
+            background: white;
+            border-radius: 16px; padding: 8px; min-width: 80px;
             display: flex; flex-direction: column; align-items: center; text-align: center;
-            position: relative; opacity: 0.6; filter: grayscale(100%); transition: all 0.5s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            position: relative; opacity: 0.6; filter: grayscale(100%); transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             cursor: pointer;
-            border: 1px solid white;
+            border: 1px solid #f0f0f0;
         }
         .collect-item:active { transform: scale(0.95); }
         .collect-item.unlocked { 
             opacity: 1; filter: grayscale(0%); 
-            border: 2px solid var(--accent-gold); 
+            border: 2px solid var(--accent-orange); 
             transform: scale(1.02); 
             background: #fff;
         }
-        .collect-img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 4px; }
-        .collect-name { font-size: 0.6rem; color: #444; line-height: 1.1; font-weight: 600; }
-        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; opacity: 0.8; }
+        .collect-img { width: 48px; height: 48px; object-fit: contain; margin-bottom: 6px; }
+        .collect-name { font-size: 0.65rem; color: #444; line-height: 1.2; font-weight: 600; }
+        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.4rem; opacity: 0.8; }
         .collect-item.unlocked .lock-icon { display: none; }
 
         /* --- Controls --- */
-        .controls-wrapper { padding: 0 15px 20px 15px; flex-shrink: 0; }
+        .controls-wrapper { padding: 0 15px 30px 15px; flex-shrink: 0; }
         .controls {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
-            border-radius: 20px; padding: 15px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15); 
-            display: flex; flex-direction: column; gap: 10px;
-            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 24px; padding: 20px;
+            box-shadow: 0 -4px 30px rgba(0,0,0,0.08); 
+            display: flex; flex-direction: column; gap: 12px;
         }
-        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .btn {
             background: white; border: 1px solid #eee; color: var(--text-color);
-            padding: 8px 2px; border-radius: 15px; font-size: 0.8rem; font-weight: bold;
+            padding: 10px 2px; border-radius: 16px; font-size: 0.8rem; font-weight: bold;
             cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 65px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            min-height: 70px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             transition: all 0.2s;
         }
         .btn:active { background: #f9f9f9; transform: scale(0.95); }
@@ -226,63 +307,88 @@
         .btn span { font-size: 0.6rem; color: #888; margin-top: 2px; }
         
         .btn-lottery {
-            background: linear-gradient(135deg, #FDB813, #D4AF37); 
+            background: linear-gradient(135deg, #FF9F43, #FFC107); 
             border: none; color: white;
-            padding: 12px; font-size: 1rem; width: 100%; border-radius: 15px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+            padding: 14px; font-size: 1rem; width: 100%; border-radius: 16px;
+            font-weight: 800;
+            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .btn-lottery:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
-        #message-log { text-align: center; font-size: 0.8rem; color: #666; height: 18px; font-style: italic; }
+        #message-log { text-align: center; font-size: 0.85rem; color: #888; height: 20px; }
 
         /* --- Modal Styles --- */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); z-index: 1000;
+            background: rgba(0, 0, 0, 0.6); z-index: 1000;
             justify-content: center; align-items: center; animation: fadeIn 0.2s;
-            backdrop-filter: blur(3px);
+            backdrop-filter: blur(4px);
         }
         .modal-content {
-            background: white; padding: 30px 20px; border-radius: 20px;
-            width: 80%; max-width: 320px; text-align: center; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: popIn 0.3s;
-            border: 2px solid var(--accent-gold);
+            background: white; padding: 30px 20px; border-radius: 24px;
+            width: 85%; max-width: 320px; text-align: center; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popIn 0.3s;
+            max-height: 80vh; overflow-y: auto; 
         }
         .modal-img-large {
             width: 120px; height: 120px; object-fit: contain; margin-bottom: 15px;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.15));
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.1));
         }
         .close-btn {
-            position: absolute; top: 10px; right: 15px; font-size: 28px; color: #999; cursor: pointer; line-height: 1;
+            position: absolute; top: 15px; right: 20px; font-size: 28px; color: #aaa; cursor: pointer; line-height: 1;
+            padding: 5px; /* Larger touch target */
         }
-        .modal-title { font-size: 1.3rem; font-weight: bold; color: var(--primary-blue); margin-bottom: 5px; }
-        .modal-desc { font-size: 0.9rem; color: #666; margin-bottom: 10px; line-height: 1.5; }
+        html[dir="rtl"] .close-btn { right: auto; left: 20px; }
+
+        .modal-title { font-size: 1.4rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 8px; }
+        .modal-desc { font-size: 0.95rem; color: #666; margin-bottom: 15px; line-height: 1.5; }
         
+        /* --- History List Styles --- */
+        .history-list {
+            text-align: left;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid #eee;
+        }
+        html[dir="rtl"] .history-list { text-align: right; }
+
+        .history-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f9f9f9;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            color: #555;
+        }
+        .history-item span.plus { color: var(--success-green); font-weight: bold; }
+        .history-time { color: #aaa; font-size: 0.75rem; margin-left: 5px; }
+        html[dir="rtl"] .history-time { margin-left: 0; margin-right: 5px; }
+
         /* --- Lottery Grid Styles --- */
         .lottery-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 20px;
         }
         .lottery-item {
             aspect-ratio: 1;
-            background: #f0f0f0;
-            border-radius: 8px;
+            background: #f8f9fa;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: bold;
             color: #555;
             border: 2px solid transparent;
             position: relative;
         }
         .lottery-item.active {
-            background: #fffbe6;
-            border-color: #D4AF37;
-            box-shadow: 0 0 10px #D4AF37;
+            background: #fff8e1;
+            border-color: #FFC107;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
             transform: scale(1.05);
             z-index: 10;
         }
@@ -295,29 +401,48 @@
 <body>
 
     <!-- Sadness Warning Banner -->
-    <div id="sad-warning">⚠️ 小狮子感到孤单(伤心)，暂停成长了... 快给它开斋(喂食)！</div>
+    <div id="sad-warning" data-key="warning_sad">⚠️ Your lion is sad! Growth stopped. Please feed him!</div>
+
+    <!-- Top Notification Bar -->
+    <div id="notification-bar"></div>
 
     <!-- Header -->
     <div class="header">
+        <div class="lang-switch-container">
+            <select id="lang-select" onchange="game.setLanguage(this.value)">
+                <option value="en">🌐 English</option>
+                <option value="zh">🌐 中文</option>
+                <option value="ar">🌐 العربية</option>
+                <option value="id">🌐 Indonesia</option>
+                <option value="tr">🌐 Türkçe</option>
+            </select>
+        </div>
+
         <div class="top-row">
-            <div class="points-display">🌙 <span id="score-val">0</span></div>
-            <div class="time-display">🕌 Online: <span id="time-val">0m</span></div>
+            <!-- Points Balance -->
+            <div class="points-display" onclick="game.showHistory()">
+                ❤️ <span id="score-val">0</span> <span data-key="currency">Pts</span>
+            </div>
+            <!-- Time Display -->
+            <div class="time-display">
+                ⏳ <span id="time-val">00:00:00</span>
+            </div>
         </div>
         <div class="stats-container">
             <div class="stat-item">
-                <div class="stat-label"><span>Iftar (Hunger)</span><span id="val-hunger">100%</span></div>
+                <div class="stat-label"><span data-key="stat_hunger">Hunger</span><span id="val-hunger">100%</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-hunger"></div></div>
             </div>
             <div class="stat-item">
-                <div class="stat-label"><span>Clean</span><span id="val-hygiene">100%</span></div>
+                <div class="stat-label"><span data-key="stat_clean">Clean</span><span id="val-hygiene">100%</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-hygiene"></div></div>
             </div>
             <div class="stat-item">
-                <div class="stat-label"><span>Mood</span><span id="val-mood">100%</span></div>
+                <div class="stat-label"><span data-key="stat_mood">Mood</span><span id="val-mood">100%</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-mood"></div></div>
             </div>
             <div class="stat-item">
-                <div class="stat-label"><span>Knowledge</span><span id="val-knowledge">100%</span></div>
+                <div class="stat-label"><span data-key="stat_know">Knowledge</span><span id="val-knowledge">100%</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-knowledge"></div></div>
             </div>
         </div>
@@ -326,56 +451,63 @@
     <!-- Scrollable Body -->
     <div class="main-content">
         
-        <!-- NEW: Growth Progress Bar -->
-        <div class="growth-container">
-            <div class="growth-title" id="stage-name">Baby Lion</div>
-            <div class="growth-bar-bg">
-                <div class="growth-bar-fill" id="growth-fill"></div>
-            </div>
-            <div class="growth-text" id="growth-text">Next evolution in 60m</div>
-        </div>
-
         <!-- Stage -->
         <div class="stage">
             <img id="pet-image" src="" alt="Blue Lion" draggable="false" />
+            
+            <!-- NEW: Vertical Growth Sidebar -->
+            <div id="growth-component" class="growth-sidebar">
+                <!-- Next Stage Icon (Clickable) -->
+                <div class="growth-icon next" onclick="game.showNextStageInfo()">
+                    <img id="next-stage-icon" src="" alt="Next">
+                </div>
+                <!-- Vertical Progress Bar -->
+                <div class="v-bar-bg">
+                    <div id="growth-fill" class="v-bar-fill"></div>
+                </div>
+                <!-- Current Stage Icon -->
+                <div class="growth-icon current">
+                    <img id="current-stage-icon" src="" alt="Current">
+                </div>
+            </div>
         </div>
 
         <!-- Collection -->
         <div class="collection-wrapper">
-            <div class="collection-title">🏆 Ramadan Collection (Rewards)</div>
+            <div class="collection-title" data-key="collection_title">🏆 Collection</div>
             <div class="collection-grid" id="collection-grid"></div>
         </div>
 
         <!-- Controls -->
         <div class="controls-wrapper">
             <div class="controls">
-                <div id="message-log">Ramadan Kareem! 🌙</div>
+                <div id="message-log" data-key="msg_hello">Hello! Take care of me! ❤️</div>
                 <div class="action-grid">
                     <button class="btn" onclick="game.action('feed')">
-                        🥙 Iftar
-                        <span>-10 pts</span>
+                        🍖 <span data-key="btn_feed">Feed</span>
+                        <span data-key="cost_10">-10 Pts</span>
                     </button>
                     <button class="btn" onclick="game.action('bathe')">
-                        🛁 Clean
-                        <span>-10 pts</span>
+                        🛁 <span data-key="btn_bath">Bath</span>
+                        <span data-key="cost_10">-10 Pts</span>
                     </button>
                     <button class="btn" onclick="game.action('play')">
-                        🏮 Play
-                        <span>-15 pts</span>
+                        ⚽ <span data-key="btn_play">Play</span>
+                        <span data-key="cost_15">-15 Pts</span>
                     </button>
                     <button class="btn" onclick="game.action('study')">
-                        📖 Read
-                        <span>-20 pts</span>
+                        📚 <span data-key="btn_study">Study</span>
+                        <span data-key="cost_20">-20 Pts</span>
                     </button>
                 </div>
                 <button class="btn btn-lottery" id="btn-lottery" onclick="game.playLottery()">
-                    🎁 Lucky Draw
+                    🎁 <span data-key="btn_lottery">Lucky Draw</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Detail Modal -->
+    <!-- Modals -->
     <div id="reward-modal" class="modal-overlay" onclick="game.closeModal('reward-modal')">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="game.closeModal('reward-modal')">&times;</span>
@@ -385,46 +517,181 @@
         </div>
     </div>
 
-    <!-- Bonus Drop Modal -->
-    <div id="bonus-modal" class="modal-overlay" onclick="game.closeModal('bonus-modal')">
+    <div id="history-modal" class="modal-overlay" onclick="game.closeModal('history-modal')">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="game.closeModal('bonus-modal')">&times;</span>
-            <div style="font-size:3.5rem; margin-bottom:10px;">💰</div>
-            <div class="modal-title" style="color:var(--accent-gold);">Surprise!</div>
-            <div class="modal-desc" id="bonus-text">You found coins!</div>
-            <button class="btn-lottery" onclick="game.closeModal('bonus-modal')">Alhamdulillah!</button>
+            <span class="close-btn" onclick="game.closeModal('history-modal')">&times;</span>
+            <div class="modal-title" data-key="modal_history">❤️ History</div>
+            <div class="history-list" id="history-list">
+                <div style="text-align:center; padding:20px; color:#999;" data-key="no_history">No records</div>
+            </div>
         </div>
     </div>
 
-    <!-- Lottery Modal (Roulette) -->
     <div id="lottery-modal" class="modal-overlay">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-title">🎁 Lucky Draw</div>
+            <div class="modal-title" data-key="modal_lottery">🎁 Lucky Draw</div>
             <div class="lottery-grid" id="lottery-grid"></div>
-            <div id="lottery-status" style="margin-top:10px; color:#888;">Spinning...</div>
+            <div id="lottery-status" style="margin-top:10px; color:#888;" data-key="spinning">Spinning...</div>
         </div>
     </div>
 
-    <!-- Lottery Result Popup -->
     <div id="lottery-result-modal" class="modal-overlay">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="game.closeModal('lottery-result-modal')">&times;</span>
             <div style="font-size:3rem; margin-bottom:10px;">🎉</div>
-            <div class="modal-title">Congratulations!</div>
-            <div class="modal-desc" id="lottery-win-text">You won 100 Points!</div>
-            <button class="btn-lottery" onclick="game.closeModal('lottery-result-modal')">Awesome!</button>
+            <div class="modal-title" data-key="congrats">Congratulations!</div>
+            <div class="modal-desc" id="lottery-win-text">You won!</div>
+            <button class="btn-lottery" onclick="game.closeModal('lottery-result-modal')" data-key="awesome">Awesome!</button>
         </div>
     </div>
 
 <script>
 /**
  * =========================================================
- * 1. ASSET & GROWTH CONFIGURATION
+ * 1. MULTI-LANGUAGE CONFIGURATION
+ * =========================================================
+ */
+const TRANSLATIONS = {
+    en: {
+        currency: "Pts",
+        warning_sad: "⚠️ Your lion is sad! Growth stopped.",
+        stat_hunger: "Hunger", stat_clean: "Clean", stat_mood: "Mood", stat_know: "Study",
+        stage_baby: "Baby Lion", stage_kid: "Kid Lion", stage_trendy: "Trendy Lion", stage_gentle: "Gentleman",
+        next_evo: "Next evolution: ", max_level: "Max Level Reached! 👑",
+        collection_title: "🏆 Collection",
+        msg_hello: "Hello! Take care of me! ❤️",
+        btn_feed: "Feed", btn_bath: "Bath", btn_play: "Play", btn_study: "Study",
+        cost_10: "-10 Pts", cost_15: "-15 Pts", cost_20: "-20 Pts",
+        btn_lottery: "Lucky Draw", btn_wait: "Wait", btn_sad: "Too Sad",
+        modal_history: "❤️ History", no_history: "No records",
+        modal_lottery: "🎁 Lucky Draw", spinning: "Spinning...",
+        congrats: "Congratulations!", awesome: "Awesome!",
+        won_text: "You won {val} Points!",
+        unlocked: "✨ <b>Unlocked!</b><br>You own this item.",
+        locked: "🔒 <b>Locked</b><br>Need Online: {time}",
+        bonus_msg: "✨ Surprise! Growth +{sec}s!",
+        not_enough: "Not enough points!",
+        lottery_history: "Lottery",
+        day: "d", hour: "h", min: "m",
+        next_stage_hint: "Next stage in {val} mins!", // New key
+        item_moon: "Moon Frame", item_star: "Star Frame", item_gold: "Golden Frame",
+        item_red_car: "Red Car", item_blue_car: "Blue Car", item_super_car: "Super Car",
+        item_medal: "Legend Medal"
+    },
+    zh: {
+        currency: "积分",
+        warning_sad: "⚠️ 小狮子不开心了！成长停止。",
+        stat_hunger: "饱腹", stat_clean: "清洁", stat_mood: "心情", stat_know: "知识",
+        stage_baby: "婴儿小狮子", stage_kid: "幼年小狮子", stage_trendy: "潮男狮子", stage_gentle: "绅士狮子",
+        next_evo: "距离进化: ", max_level: "已达最高等级! 👑",
+        collection_title: "🏆 收藏馆",
+        msg_hello: "你好！请好好照顾我 ❤️",
+        btn_feed: "喂食", btn_bath: "洗澡", btn_play: "玩耍", btn_study: "学习",
+        cost_10: "-10 积分", cost_15: "-15 积分", cost_20: "-20 积分",
+        btn_lottery: "幸运抽奖", btn_wait: "等待", btn_sad: "心情不好",
+        modal_history: "❤️ 积分记录", no_history: "暂无记录",
+        modal_lottery: "🎁 幸运抽奖", spinning: "抽奖中...",
+        congrats: "恭喜中奖!", awesome: "太棒了!",
+        won_text: "获得了 {val} 积分!",
+        unlocked: "✨ <b>已解锁!</b><br>你拥有这个物品。",
+        locked: "🔒 <b>未解锁</b><br>需要在线: {time}",
+        bonus_msg: "✨ 惊喜! 成长加速 +{sec}秒!",
+        not_enough: "积分不足!",
+        lottery_history: "幸运抽奖",
+        day: "天", hour: "小时", min: "分",
+        next_stage_hint: "距离下一阶段还有 {val} 分钟!",
+        item_moon: "月亮相框", item_star: "星星相框", item_gold: "黄金相框",
+        item_red_car: "红色跑车", item_blue_car: "蓝色跑车", item_super_car: "超级赛车",
+        item_medal: "传奇勋章"
+    },
+    ar: {
+        currency: "ن",
+        warning_sad: "⚠️ أسدك حزين! توقف النمو.",
+        stat_hunger: "جوع", stat_clean: "نظافة", stat_mood: "مزاج", stat_know: "عالم",
+        stage_baby: "شبل صغير", stage_kid: "شبل يافع", stage_trendy: "أسد عصري", stage_gentle: "أسد نبيل",
+        next_evo: "التطور القادم: ", max_level: "وصل لأعلى مستوى! 👑",
+        collection_title: "🏆 المجموعة",
+        msg_hello: "مرحباً! اعتنِ بي ❤️",
+        btn_feed: "إطعام", btn_bath: "استحمام", btn_play: "لعب", btn_study: "دراسة",
+        cost_10: "-10 ن", cost_15: "-15 ن", cost_20: "-20 ن",
+        btn_lottery: "سحب الحظ", btn_wait: "انتظر", btn_sad: "حزين جداً",
+        modal_history: "❤️ السجل", no_history: "لا توجد سجلات",
+        modal_lottery: "🎁 سحب الحظ", spinning: "جاري السحب...",
+        congrats: "تهانينا!", awesome: "رائع!",
+        won_text: "ربحت {val} نقطة!",
+        unlocked: "✨ <b>مفتوح!</b><br>أنت تملك هذا العنصر.",
+        locked: "🔒 <b>مغلق</b><br>تحتاج وقت: {time}",
+        bonus_msg: "✨ مفاجأة! نمو +{sec}ث!",
+        not_enough: "نقاط غير كافية!",
+        lottery_history: "سحب الحظ",
+        day: "ي", hour: "س", min: "د",
+        next_stage_hint: "المرحلة القادمة في {val} دقيقة!",
+        item_moon: "إطار القمر", item_star: "إطار النجمة", item_gold: "الإطار الذهبي",
+        item_red_car: "سيارة حمراء", item_blue_car: "سيارة زرقاء", item_super_car: "سيارة خارقة",
+        item_medal: "ميدالية أسطورية"
+    },
+    id: {
+        currency: "Poin",
+        warning_sad: "⚠️ Singa sedih! Pertumbuhan berhenti.",
+        stat_hunger: "Lapar", stat_clean: "Bersih", stat_mood: "Mood", stat_know: "Pintar",
+        stage_baby: "Bayi Singa", stage_kid: "Singa Kecil", stage_trendy: "Singa Gaul", stage_gentle: "Singa Tuan",
+        next_evo: "Evolusi dlm: ", max_level: "Level Maks! 👑",
+        collection_title: "🏆 Koleksi",
+        msg_hello: "Halo! Rawat aku ya ❤️",
+        btn_feed: "Makan", btn_bath: "Mandi", btn_play: "Main", btn_study: "Belajar",
+        cost_10: "-10 P", cost_15: "-15 P", cost_20: "-20 P",
+        btn_lottery: "Undian", btn_wait: "Tunggu", btn_sad: "Sedih",
+        modal_history: "❤️ Riwayat", no_history: "Tidak ada data",
+        modal_lottery: "🎁 Undian", spinning: "Memutar...",
+        congrats: "Selamat!", awesome: "Mantap!",
+        won_text: "Dapat {val} Poin!",
+        unlocked: "✨ <b>Terbuka!</b><br>Milikmu.",
+        locked: "🔒 <b>Terkunci</b><br>Butuh Online: {time}",
+        bonus_msg: "✨ Kejutan! Tumbuh +{sec}dtk!",
+        not_enough: "Poin kurang!",
+        lottery_history: "Undian",
+        day: "h", hour: "j", min: "m",
+        next_stage_hint: "Tahap selanjutnya dalam {val} menit!",
+        item_moon: "Bingkai Bulan", item_star: "Bingkai Bintang", item_gold: "Bingkai Emas",
+        item_red_car: "Mobil Merah", item_blue_car: "Mobil Biru", item_super_car: "Mobil Super",
+        item_medal: "Medali Legenda"
+    },
+    tr: {
+        currency: "Puan",
+        warning_sad: "⚠️ Aslan üzgün! Büyüme durdu.",
+        stat_hunger: "Açlık", stat_clean: "Temiz", stat_mood: "Mod", stat_know: "Bilgi",
+        stage_baby: "Bebek Aslan", stage_kid: "Çocuk Aslan", stage_trendy: "Havalı Aslan", stage_gentle: "Beyefendi",
+        next_evo: "Sonraki evrim: ", max_level: "Son Seviye! 👑",
+        collection_title: "🏆 Koleksiyon",
+        msg_hello: "Merhaba! Bana iyi bak ❤️",
+        btn_feed: "Besle", btn_bath: "Yıka", btn_play: "Oyna", btn_study: "Oku",
+        cost_10: "-10 P", cost_15: "-15 P", cost_20: "-20 P",
+        btn_lottery: "Şanslı Çekiliş", btn_wait: "Bekle", btn_sad: "Üzgün",
+        modal_history: "❤️ Geçmiş", no_history: "Kayıt yok",
+        modal_lottery: "🎁 Çekiliş", spinning: "Dönüyor...",
+        congrats: "Tebrikler!", awesome: "Harika!",
+        won_text: "{val} Puan Kazandın!",
+        unlocked: "✨ <b>Açık!</b><br>Buna sahipsin.",
+        locked: "🔒 <b>Kilitli</b><br>Gereken Süre: {time}",
+        bonus_msg: "✨ Sürpriz! Büyüme +{sec}sn!",
+        not_enough: "Puan yetersiz!",
+        lottery_history: "Çekiliş",
+        day: "g", hour: "s", min: "d",
+        next_stage_hint: "Sonraki aşama {val} dakika içinde!",
+        item_moon: "Ay Çerçevesi", item_star: "Yıldız Çerçevesi", item_gold: "Altın Çerçeve",
+        item_red_car: "Kırmızı Araba", item_blue_car: "Mavi Araba", item_super_car: "Süper Araba",
+        item_medal: "Efsane Madalyası"
+    }
+};
+
+/**
+ * =========================================================
+ * 2. ASSET & GROWTH CONFIGURATION
  * =========================================================
  */
 const LION_STAGES = [
     {
-        name: "Baby Lion",
+        name_key: "stage_baby",
         minMinutes: 0,
         assets: {
             idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_605328cb-0397-4ae6-9d8c-81d9faa9c2cg.png",
@@ -437,7 +704,7 @@ const LION_STAGES = [
         }
     },
     {
-        name: "Kid Lion",
+        name_key: "stage_kid",
         minMinutes: 60,
         assets: {
             idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_0932da40-1ec4-4b08-bcaf-50059a9c590g.png",
@@ -450,7 +717,7 @@ const LION_STAGES = [
         }
     },
     {
-        name: "Trendy Lion",
+        name_key: "stage_trendy",
         minMinutes: 1440, 
         assets: {
             idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_68b43430-306d-4e8f-adbc-93c98b199a1g.png",
@@ -463,7 +730,7 @@ const LION_STAGES = [
         }
     },
     {
-        name: "Gentleman Lion",
+        name_key: "stage_gentle",
         minMinutes: 4320, 
         assets: {
             idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_599dfcf7-4217-4ade-aede-04b3bd4674dg.png",
@@ -478,13 +745,13 @@ const LION_STAGES = [
 ];
 
 const ACHIEVEMENTS = [
-    { id: 'frame_a', timeMin: 1,      name: "Moon Frame",     img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_a855cdd3-3897-475f-b5d5-707171d8843g.png" },
-    { id: 'frame_b', timeMin: 30,     name: "Star Frame",     img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_05ff92d2-cec1-48e5-9ce2-89af79bafadg.png" },
-    { id: 'frame_c', timeMin: 60,     name: "Golden Frame",   img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_a938c968-4f9d-44c8-8ecd-f668cbf292ag.png" },
-    { id: 'car_d',   timeMin: 180,    name: "Red Car",        img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_052e03b4-d355-4bc1-8905-f4635eeecbdg.png" },
-    { id: 'car_e',   timeMin: 360,    name: "Blue Car",       img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_3765483f-518b-4905-a1f8-0983d97ce48g.png" },
-    { id: 'car_f',   timeMin: 1440,   name: "Super Car",      img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_ab4cafbd-eded-4ba3-a96b-b5f3757869ag.png" }, 
-    { id: 'medal_g', timeMin: 2880,   name: "Ramadan Medal",  img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_c98e167c-e338-4c70-8fe6-1c94620cab7g.png" } 
+    { id: 'frame_a', timeMin: 1,      name_key: "item_moon",    img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_a855cdd3-3897-475f-b5d5-707171d8843g.png" },
+    { id: 'frame_b', timeMin: 30,     name_key: "item_star",    img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_05ff92d2-cec1-48e5-9ce2-89af79bafadg.png" },
+    { id: 'frame_c', timeMin: 60,     name_key: "item_gold",    img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_a938c968-4f9d-44c8-8ecd-f668cbf292ag.png" },
+    { id: 'car_d',   timeMin: 180,    name_key: "item_red_car", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_052e03b4-d355-4bc1-8905-f4635eeecbdg.png" },
+    { id: 'car_e',   timeMin: 360,    name_key: "item_blue_car",img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_3765483f-518b-4905-a1f8-0983d97ce48g.png" },
+    { id: 'car_f',   timeMin: 1440,   name_key: "item_super_car",img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_ab4cafbd-eded-4ba3-a96b-b5f3757869ag.png" }, 
+    { id: 'medal_g', timeMin: 2880,   name_key: "item_medal",   img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_c98e167c-e338-4c70-8fe6-1c94620cab7g.png" } 
 ];
 
 const CONSTANTS = {
@@ -492,17 +759,17 @@ const CONSTANTS = {
     PASSIVE_INCOME_MS: 60000, 
     LOTTERY_COOLDOWN: 5 * 60 * 1000, 
     ACTIONS: {
-        feed: { cost: 10, stat: 'hunger', amount: 30, anim: 'eating', duration: 2000, msg: "Yummy Iftar!" },
-        bathe: { cost: 10, stat: 'hygiene', amount: 40, anim: 'washing', duration: 2500, msg: "So Clean!" },
-        play: { cost: 15, stat: 'mood', amount: 25, anim: 'playing', duration: 2000, msg: "Happy!" },
-        study: { cost: 20, stat: 'knowledge', amount: 20, anim: 'studying', duration: 3000, msg: "Learning..." }
+        feed: { cost: 10, stat: 'hunger', amount: 30, anim: 'eating', duration: 2000 },
+        bathe: { cost: 10, stat: 'hygiene', amount: 40, anim: 'washing', duration: 2500 },
+        play: { cost: 15, stat: 'mood', amount: 25, anim: 'playing', duration: 2000 },
+        study: { cost: 20, stat: 'knowledge', amount: 20, anim: 'studying', duration: 3000 }
     }
 };
 
 const LOTTERY_ITEMS = [
-    { val: 10, text: "10 🌙" }, { val: 50, text: "50 🌙" }, { val: 100, text: "100 🌙" },
-    { val: 5000, text: "5000 🌟" }, { val: 0, text: "" }, { val: 200, text: "200 🌙" }, 
-    { val: 500, text: "500 🌙" }, { val: 20, text: "20 🌙" }, { val: 1000, text: "1000 🌙" }
+    { val: 10, text: "10 ❤️" }, { val: 50, text: "50 ❤️" }, { val: 100, text: "100 ❤️" },
+    { val: 5000, text: "5000 ❤️" }, { val: 0, text: "" }, { val: 200, text: "200 ❤️" }, 
+    { val: 500, text: "500 ❤️" }, { val: 20, text: "20 ❤️" }, { val: 1000, text: "1000 ❤️" }
 ];
 const LOTTERY_SEQUENCE = [0, 1, 2, 5, 8, 7, 6, 3]; 
 
@@ -513,21 +780,66 @@ class Game {
             points: 100,
             lastLottery: 0,
             totalTimeSec: 0, 
-            unlockedItems: []
+            unlockedItems: [],
+            history: [],
+            lang: 'en' // Default language
         };
         this.animTimer = null;
         this.isSad = false;
         this.currentStage = 0; 
+        this.notificationTimer = null;
+        this.translations = TRANSLATIONS.en; // Current translation obj
     }
 
     init() {
         this.loadData();
+        this.setLanguage(this.state.lang); // Apply saved language
         this.updateGrowthStage(); 
         this.renderCollectionGrid(); 
         this.preloadImages();
         this.setupTimers();
         this.render();
         this.setPetState('idle');
+        this.checkBackground();
+    }
+
+    // --- NEW: Language Handling ---
+    setLanguage(lang) {
+        this.state.lang = lang;
+        this.translations = TRANSLATIONS[lang] || TRANSLATIONS.en;
+        
+        // Update RTL
+        if (lang === 'ar') {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.lang = 'ar';
+        } else {
+            document.documentElement.setAttribute('dir', 'ltr');
+            document.documentElement.lang = lang;
+        }
+
+        // Update Dropdown UI
+        document.getElementById('lang-select').value = lang;
+
+        // Update all data-key elements
+        this.updateText();
+        this.saveData();
+    }
+
+    updateText() {
+        const t = this.translations;
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (t[key]) el.innerText = t[key];
+        });
+        // Force refresh dynamic text (growth bar, lottery button etc)
+        this.renderGrowth();
+        this.updateLotteryButton();
+        this.renderCollectionGrid(); // Re-render to update names if needed
+    }
+
+    // Helper to get text safe
+    getText(key) {
+        return this.translations[key] || key;
     }
 
     updateGrowthStage() {
@@ -540,8 +852,21 @@ class Game {
         }
         if (this.currentStage !== stageIndex) {
             this.currentStage = stageIndex;
-            console.log("Growth! Lion is now: " + LION_STAGES[stageIndex].name);
         }
+    }
+
+    // --- NEW: Show remaining time on click ---
+    showNextStageInfo() {
+        const nextStageObj = LION_STAGES[this.currentStage + 1];
+        if (!nextStageObj) return;
+
+        const currentMins = this.state.totalTimeSec / 60;
+        const targetMins = nextStageObj.minMinutes;
+        const remaining = Math.ceil(targetMins - currentMins);
+        
+        // Show hint in notification bar
+        const msg = this.getText('next_stage_hint').replace('{val}', remaining);
+        this.showNotification(msg);
     }
 
     getCurrentAssets() {
@@ -566,10 +891,11 @@ class Game {
             div.id = `item-${item.id}`;
             div.onclick = () => this.openModal(item);
             
+            // Name uses name_key for translation
             div.innerHTML = `
                 <div class="lock-icon">🔒</div>
-                <img src="${item.img}" class="collect-img" alt="${item.name}">
-                <div class="collect-name">${item.name}</div>
+                <img src="${item.img}" class="collect-img" alt="${item.name_key}">
+                <div class="collect-name">${this.getText(item.name_key)}</div>
                 <div class="collect-name" style="font-size:0.55rem; color:#aaa">${this.formatTimeReq(item.timeMin)}</div>
             `;
             grid.appendChild(div);
@@ -584,17 +910,17 @@ class Game {
         const desc = document.getElementById('modal-desc');
 
         img.src = item.img;
-        title.innerText = item.name;
+        title.innerText = this.getText(item.name_key);
 
         const isUnlocked = this.state.unlockedItems.includes(item.id);
         
         if(isUnlocked) {
             img.style.filter = "none";
-            desc.innerHTML = "✨ <b>Alhamdulillah!</b><br>已拥有此奖励";
+            desc.innerHTML = this.getText('unlocked');
             desc.style.color = "var(--success-green)";
         } else {
             img.style.filter = "grayscale(100%)";
-            desc.innerHTML = `🔒 <b>Locked</b><br>需要累计在线: ${this.formatTimeReq(item.timeMin)}`;
+            desc.innerHTML = this.getText('locked').replace('{time}', this.formatTimeReq(item.timeMin));
             desc.style.color = "#888";
         }
         modal.style.display = 'flex';
@@ -604,17 +930,57 @@ class Game {
         document.getElementById(id).style.display = 'none';
     }
 
-    showBonusModal(amount) {
-        const modal = document.getElementById('bonus-modal');
-        const text = document.getElementById('bonus-text');
-        text.innerText = `You found ${amount} Gold Coins!`;
-        modal.style.display = 'flex';
+    showNotification(message) {
+        const bar = document.getElementById('notification-bar');
+        if (this.notificationTimer) clearTimeout(this.notificationTimer);
+        bar.innerText = message;
+        bar.classList.add('show');
+        this.notificationTimer = setTimeout(() => {
+            bar.classList.remove('show');
+        }, 5000);
     }
 
     formatTimeReq(min) {
-        if(min >= 1440) return (min/1440).toFixed(1) + "d";
-        if(min >= 60) return (min/60).toFixed(1) + "h";
-        return min + "m";
+        if(min >= 1440) return (min/1440).toFixed(1) + this.getText('day');
+        if(min >= 60) return (min/60).toFixed(1) + this.getText('hour');
+        return min + this.getText('min');
+    }
+
+    showHistory() {
+        const list = document.getElementById('history-list');
+        list.innerHTML = '';
+        const history = this.state.history || [];
+        if (history.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">${this.getText('no_history')}</div>`;
+        } else {
+            history.slice(-20).reverse().forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                const date = new Date(item.time);
+                const timeStr = `${date.getHours()}:${date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()}`;
+                
+                let desc = item.desc;
+                if(item.desc === 'lottery') desc = this.getText('lottery_history');
+
+                div.innerHTML = `
+                    <div>${desc} <span class="history-time">${timeStr}</span></div>
+                    <span class="plus">+${item.amount} ❤️</span>
+                `;
+                list.appendChild(div);
+            });
+        }
+        document.getElementById('history-modal').style.display = 'flex';
+    }
+
+    addToHistory(type, amount, desc) {
+        if (!this.state.history) this.state.history = [];
+        this.state.history.push({
+            type: type,
+            amount: amount,
+            desc: desc,
+            time: Date.now()
+        });
+        if (this.state.history.length > 50) this.state.history.shift();
     }
 
     updateCollectionVisuals() {
@@ -641,7 +1007,7 @@ class Game {
                 this.checkAchievements();
             }
             this.renderTime();
-            this.renderGrowth(); // New: Update Growth Bar
+            this.renderGrowth(); 
         }, 1000);
 
         setInterval(() => {
@@ -660,7 +1026,7 @@ class Game {
 
         setInterval(() => {
             this.state.points += 5;
-            this.showToast("+5 🌙 (Passive)", null, 'gain');
+            this.showToast("+5 ❤️", null, null, 'gain');
             this.renderPoints();
             this.saveData();
         }, CONSTANTS.PASSIVE_INCOME_MS);
@@ -675,7 +1041,7 @@ class Game {
         ACHIEVEMENTS.forEach(item => {
             if (currentMin >= item.timeMin && !this.state.unlockedItems.includes(item.id)) {
                 this.state.unlockedItems.push(item.id);
-                this.showToast(`🏆 Unlocked: ${item.name}!`, null, 'gain');
+                this.showToast(`🏆 ${this.getText(item.name_key)}!`, null, null, 'gain');
                 this.playSound('win');
                 newUnlock = true;
             }
@@ -690,35 +1056,40 @@ class Game {
         this.renderStats();
         this.renderPoints();
         this.renderTime();
-        this.renderGrowth(); // New
+        this.renderGrowth();
         this.updateCollectionVisuals();
     }
 
-    // --- NEW: Render Growth Bar ---
     renderGrowth() {
         const currentMins = this.state.totalTimeSec / 60;
         const currentStageObj = LION_STAGES[this.currentStage];
         const nextStageObj = LION_STAGES[this.currentStage + 1];
 
-        const titleEl = document.getElementById('stage-name');
-        const fillEl = document.getElementById('growth-fill');
-        const textEl = document.getElementById('growth-text');
+        // --- NEW: Update Vertical Sidebar UI ---
+        const nextIcon = document.getElementById('next-stage-icon');
+        const currentIcon = document.getElementById('current-stage-icon');
+        const fill = document.getElementById('growth-fill');
+        const sidebar = document.getElementById('growth-component');
 
-        titleEl.innerText = `Current Stage: ${currentStageObj.name}`;
-
-        if (nextStageObj) {
-            const startMins = currentStageObj.minMinutes;
-            const targetMins = nextStageObj.minMinutes;
-            const progress = ((currentMins - startMins) / (targetMins - startMins)) * 100;
-            const remaining = Math.ceil(targetMins - currentMins);
-            
-            fillEl.style.width = `${Math.min(100, Math.max(0, progress))}%`;
-            textEl.innerText = `Next evolution: ${remaining} mins`;
+        // Check Max Level
+        if (!nextStageObj) {
+            sidebar.style.display = 'none';
+            return;
         } else {
-            // Max Level
-            fillEl.style.width = '100%';
-            textEl.innerText = "Max Level Reached! 👑";
+            sidebar.style.display = 'flex';
         }
+
+        // Update Icons (Only if src changes to avoid flicker)
+        if (currentIcon.src !== currentStageObj.assets.idle) currentIcon.src = currentStageObj.assets.idle;
+        if (nextIcon.src !== nextStageObj.assets.idle) nextIcon.src = nextStageObj.assets.idle;
+
+        // Calculate Progress
+        const startMins = currentStageObj.minMinutes;
+        const targetMins = nextStageObj.minMinutes;
+        const progress = ((currentMins - startMins) / (targetMins - startMins)) * 100;
+        
+        // Update Bar Height
+        fill.style.height = `${Math.min(100, Math.max(0, progress))}%`;
     }
 
     renderStats() {
@@ -739,17 +1110,17 @@ class Game {
     
     renderTime() {
         const sec = this.state.totalTimeSec;
-        let tStr = "";
-        if (sec < 60) tStr = sec + "s";
-        else if (sec < 3600) tStr = Math.floor(sec/60) + "m";
-        else tStr = (sec/3600).toFixed(1) + "h";
-        document.getElementById('time-val').innerText = tStr;
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
+        const pad = (num) => num < 10 ? '0' + num : num;
+        document.getElementById('time-val').innerText = `${pad(h)}:${pad(m)}:${pad(s)}`;
     }
 
     action(type) {
         const cfg = CONSTANTS.ACTIONS[type];
         if (this.state.points < cfg.cost) {
-            this.showToast("Need Points! 🌙", null, 'cost');
+            this.showToast(this.getText('not_enough'), null, null, 'cost');
             return;
         }
         
@@ -758,12 +1129,11 @@ class Game {
         
         this.setPetState(cfg.anim, cfg.duration);
         this.playSound('action');
-        this.log(cfg.msg);
         
-        this.showToast(`-${cfg.cost} 🌙`, null, 'cost');
+        // Only showing benefit toast
         setTimeout(() => {
-            this.showToast(`+${cfg.amount} ${type.toUpperCase()}`, null, 'gain');
-        }, 200);
+            this.showToast(`+${cfg.amount} ❤️`, null, null, 'gain');
+        }, 100);
 
         this.renderStats();
         this.renderPoints();
@@ -775,12 +1145,13 @@ class Game {
         let target = currentAssets[stateKey];
         
         this.isSad = this.checkLowStats();
-        
         if (stateKey === 'idle' && this.isSad) {
             target = currentAssets.sad;
         }
         
-        petImg.src = target;
+        if (petImg.src !== target) {
+            petImg.src = target;
+        }
         
         if (this.animTimer) clearTimeout(this.animTimer);
         if (duration > 0) {
@@ -796,18 +1167,34 @@ class Game {
         return (s.hunger < 30 || s.hygiene < 30 || s.mood < 30 || s.knowledge < 30);
     }
 
-    handleTouch() {
+    handleTouch(e) {
+        let clientX = null, clientY = null;
+        if (e) {
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else if (e.clientX) {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+        }
+
         let pointsEarned = 1;
         this.state.points += 1;
         this.setPetState('touch', 1000);
-        this.showToast("+1 ❤️", null, 'gain');
+        this.showToast("+1 ❤️", clientX, clientY, 'gain');
 
         const bonusChance = Math.random();
-        if(bonusChance > 0.90) {
-            const bonus = Math.floor(Math.random() * 41) + 10;
-            this.state.points += bonus;
-            this.showBonusModal(bonus);
+        if(bonusChance > 0.98) {
+            const bonusSec = Math.floor(Math.random() * 120) + 1;
+            this.state.totalTimeSec += bonusSec;
+            
+            const msg = this.getText('bonus_msg').replace('{sec}', bonusSec);
+            this.showNotification(msg);
+            
             this.playSound('win');
+            this.renderTime();
+            this.renderGrowth();
         }
 
         this.renderPoints();
@@ -815,7 +1202,7 @@ class Game {
 
     playLottery() {
         if (this.isSad) {
-            alert("⚠️ Too Sad to play!");
+            alert(this.getText('warning_sad'));
             return;
         }
         const now = Date.now();
@@ -824,7 +1211,7 @@ class Game {
 
         this.drawLotteryGrid();
         document.getElementById('lottery-modal').style.display = 'flex';
-        document.getElementById('lottery-status').innerText = "Spinning...";
+        document.getElementById('lottery-status').innerText = this.getText('spinning');
 
         const rand = Math.random();
         let winningIndex = 0; 
@@ -890,7 +1277,9 @@ class Game {
         const item = LOTTERY_ITEMS[index];
         this.state.points += item.val;
         
-        document.getElementById('lottery-win-text').innerText = `You won ${item.val} Points!`;
+        this.addToHistory('lottery', item.val, 'lottery');
+
+        document.getElementById('lottery-win-text').innerText = this.getText('won_text').replace('{val}', item.val);
         document.getElementById('lottery-result-modal').style.display = 'flex';
         this.renderPoints();
         this.saveData();
@@ -909,16 +1298,16 @@ class Game {
             btn.disabled = true;
         } else {
             if(this.isSad) {
-                btn.innerText = "⛔ Too Sad";
+                btn.innerText = `⛔ ${this.getText('btn_sad')}`;
                 btn.disabled = true;
             } else {
-                btn.innerText = "🎁 Ramadan Gift";
+                btn.innerText = `🎁 ${this.getText('btn_lottery')}`;
                 btn.disabled = false;
             }
         }
     }
 
-    showToast(text, customClass = null, type = 'normal') {
+    showToast(text, x = null, y = null, type = 'normal') {
         const el = document.createElement('div');
         el.className = 'floater';
         if (type === 'cost') el.classList.add('cost');
@@ -926,15 +1315,28 @@ class Game {
         if (type === 'bonus') el.classList.add('bonus');
         
         el.innerText = text;
-        el.style.left = '50%';
-        el.style.top = '40%';
-        el.style.transform = 'translate(-50%, -50%)';
+        
+        if (x !== null && y !== null) {
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+        } else {
+            el.style.left = '50%';
+            el.style.top = '40%';
+            el.style.transform = 'translate(-50%, -50%)';
+        }
+
         document.body.appendChild(el);
         setTimeout(() => el.remove(), 1000);
     }
     
     log(msg) { document.getElementById('message-log').innerText = msg; }
     
+    checkBackground() {
+        const h = new Date().getHours();
+        const color = (h >= 19 || h < 6) ? '#2c3e50' : '#E3F2FD'; 
+        document.body.style.backgroundColor = color;
+    }
+
     playSound(type) { console.log("Sound:", type); }
 
     saveData() { localStorage.setItem('lionRamadanV2', JSON.stringify(this.state)); }
@@ -946,6 +1348,8 @@ class Game {
             this.state = { ...this.state, ...parsed };
             if(!this.state.unlockedItems) this.state.unlockedItems = [];
             if(!this.state.totalTimeSec) this.state.totalTimeSec = 0;
+            if(!this.state.history) this.state.history = [];
+            if(!this.state.lang) this.state.lang = 'en';
         } else {
             this.state.lastLottery = Date.now();
         }
@@ -955,7 +1359,8 @@ class Game {
 const game = new Game();
 window.onload = () => {
     game.init();
-    document.getElementById('pet-image').addEventListener('click', () => game.handleTouch());
+    const img = document.getElementById('pet-image');
+    img.addEventListener('pointerdown', (e) => game.handleTouch(e));
 };
 </script>
 </body>
