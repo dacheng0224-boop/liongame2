@@ -68,11 +68,10 @@
             100% { transform: translate(20px, 40px) scale(1.1); }
         }
 
-        /* --- Global Notification Bar (Adjusted) --- */
+        /* --- Global Notification Bar --- */
         #notification-bar {
             position: absolute;
-            /* Moved down to clear the stats area safely */
-            top: 170px; 
+            top: 180px; 
             left: 50%;
             transform: translateX(-50%) translateY(-20px);
             width: 90%;
@@ -113,15 +112,15 @@
             z-index: 300;
         }
 
-        /* --- Header (High Z-Index) --- */
+        /* --- Header --- */
         .header {
-            padding: max(10px, env(safe-area-inset-top)) 15px 10px 15px;
+            padding: max(10px, env(safe-area-inset-top)) 15px 15px 15px;
             background: rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(15px);
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            z-index: 200; /* Ensure header is above stage elements */
+            z-index: 200;
             flex-shrink: 0;
             position: relative;
             border-bottom: 1px solid rgba(255,255,255,0.5);
@@ -165,8 +164,8 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
-        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .stat-item { display: flex; flex-direction: column; gap: 3px; }
+        .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-item { display: flex; flex-direction: column; gap: 4px; }
         .stat-label { font-size: 0.75rem; display: flex; justify-content: space-between; color: #555; font-weight: 700; }
         html[dir="rtl"] .stat-label { flex-direction: row-reverse; }
 
@@ -176,74 +175,128 @@
         /* --- Main Content --- */
         .main-content {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: hidden; 
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; 
-            padding-bottom: 20px;
+            justify-content: space-between; 
             z-index: 5; 
-            /* Added top padding to push content down */
-            padding-top: 20px;
         }
 
         .growth-header-text { display: none; }
 
-        /* --- Stage (Container for Lion & Sidebar) --- */
+        /* --- Stage (Container for Lion) --- */
         .stage {
             flex: 1;
-            /* Minimum height to prevent collapse */
-            min-height: 280px; 
+            min-height: 250px; 
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; 
+            align-items: center;     
             position: relative;
             width: 100%;
-            /* Vertical padding ensures separation from header and collection */
+            /* Vertical padding for safety */
             padding-top: 20px;
             padding-bottom: 20px;
         }
 
         #pet-image {
-            max-width: 60%;
-            max-height: 80%;
+            max-width: 55%;
+            max-height: 75%;
             pointer-events: auto;
             cursor: pointer;
             transition: transform 0.1s;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); 
-            margin-right: 0; 
             z-index: 5;
+            /* No longer offset since right panel is smaller */
+            transform: translateX(0); 
         }
         #pet-image:active { transform: scale(0.95); }
 
-        /* --- Vertical Growth Sidebar (Fixed Positioning) --- */
-        .growth-sidebar {
+        /* --- NEW: Floating Reward Widget (Top Left) --- */
+        .next-reward-widget {
             position: absolute;
-            right: 15px;
-            /* Centered relative to the stage container */
+            top: 15px;
+            left: 20px;
+            z-index: 20; /* High z-index to float above lion */
+            
+            /* Visual Style - Capsule / Speech Bubble */
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border: 2px solid var(--accent-gold);
+            border-radius: 25px;
+            padding: 6px 14px 6px 6px; /* Less padding left for image */
+            
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            
+            /* Attraction Effects */
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+            animation: floatWidget 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        html[dir="rtl"] .next-reward-widget { left: auto; right: 20px; padding: 6px 6px 6px 14px; }
+        
+        .next-reward-widget:active { transform: scale(0.95); }
+
+        @keyframes floatWidget {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255, 193, 7, 0.5); }
+        }
+
+        .nr-img-box {
+            width: 38px; height: 38px;
+            /* No background, let the image pop */
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nr-img-box img { 
+            width: 100%; height: 100%; object-fit: contain; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .nr-text-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        html[dir="rtl"] .nr-text-group { align-items: flex-end; }
+
+        .nr-label { 
+            font-size: 0.6rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;
+        }
+        .nr-time { 
+            font-size: 0.9rem; color: var(--primary-blue); font-weight: 900; line-height: 1;
+        }
+
+
+        /* --- RIGHT PANEL (Growth Sidebar ONLY) --- */
+        .right-panel-container {
+            position: absolute;
+            right: 20px;
             top: 50%;
             transform: translateY(-50%);
+            z-index: 10;
+        }
+        html[dir="rtl"] .right-panel-container { right: auto; left: 20px; }
+
+        .growth-sidebar {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            z-index: 10;
             
-            /* Card Style */
             padding: 10px 8px; 
             background: rgba(255, 255, 255, 0.4); 
             backdrop-filter: blur(8px);
             border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            
             cursor: pointer;
             transition: transform 0.1s;
         }
-        .growth-sidebar:active { 
-            transform: translateY(-50%) scale(0.96); 
-            background: rgba(255, 255, 255, 0.6);
-        }
-        html[dir="rtl"] .growth-sidebar { right: auto; left: 15px; }
+        .growth-sidebar:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.6); }
 
         .growth-icon {
             width: 40px; height: 40px;
@@ -253,39 +306,25 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             overflow: hidden;
             display: flex; justify-content: center; align-items: center;
-            transition: transform 0.2s;
         }
         .growth-icon img { width: 90%; height: 90%; object-fit: contain; }
         .growth-icon.next { border-color: rgba(255,255,255,0.6); opacity: 0.9; }
         .growth-icon.current { border-color: var(--accent-gold); box-shadow: 0 0 12px rgba(255, 193, 7, 0.5); }
 
         .v-bar-bg {
-            width: 14px;
-            height: 100px; 
+            width: 14px; height: 100px; 
             background: rgba(255,255,255,0.5);
             border-radius: 10px;
             position: relative;
             box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
         }
         .v-bar-fill {
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 100%;
-            height: 0%; 
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 0%; 
             background: linear-gradient(to top, #FF9800, #FFEB3B);
             border-radius: 10px;
             transition: height 0.5s ease;
             box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
-        }
-        .v-bar-fill::before {
-            content: '🕙';
-            position: absolute;
-            top: -14px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 14px;
-            z-index: 15;
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
         }
 
         /* --- Floaters --- */
@@ -306,44 +345,6 @@
             50% { transform: translate(-50%, -40px) scale(1.2); }
             100% { opacity: 0; transform: translate(-50%, -80px) scale(1); }
         }
-
-        /* --- Collections --- */
-        .collection-wrapper { padding: 0 15px; margin-bottom: 10px; flex-shrink: 0; z-index: 5; }
-        .collection-title { 
-            font-size: 0.9rem; font-weight: 800; margin-bottom: 10px; 
-            color: #555; padding-left: 5px; 
-            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
-        }
-        html[dir="rtl"] .collection-title { padding-left: 0; padding-right: 5px; }
-
-        .collection-grid {
-            display: flex; gap: 12px; overflow-x: auto; padding: 5px; padding-bottom: 15px;
-            -ms-overflow-style: none; scrollbar-width: none;  
-        }
-        .collection-grid::-webkit-scrollbar { display: none; }
-
-        .collect-item {
-            background: rgba(255,255,255,0.9);
-            border-radius: 16px; padding: 10px 8px; min-width: 85px;
-            height: 110px; 
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-            position: relative; opacity: 0.6; filter: grayscale(100%); transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.6);
-        }
-        .collect-item:active { transform: scale(0.95); }
-        .collect-item.unlocked { 
-            opacity: 1; filter: grayscale(0%); 
-            border: 2px solid var(--accent-orange); 
-            transform: scale(1.02); 
-            background: #fff;
-        }
-        .collect-img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 4px; }
-        .collect-name { font-size: 0.65rem; color: #444; line-height: 1.2; font-weight: 600; }
-        .collect-time { margin-top: auto; font-size: 0.55rem; color: #999; }
-        .lock-icon { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 1.4rem; opacity: 0.8; }
-        .collect-item.unlocked .lock-icon { display: none; }
 
         /* --- Controls --- */
         .controls-wrapper { padding: 0 15px 30px 15px; flex-shrink: 0; z-index: 5; }
@@ -391,19 +392,70 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popIn 0.3s;
             max-height: 80vh; overflow-y: auto; 
         }
-        .modal-img-large {
-            width: 120px; height: 120px; object-fit: contain; margin-bottom: 15px;
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.1));
-        }
+        .modal-content.wide { max-width: 95%; width: 95%; padding: 25px 10px; }
+
         .close-btn {
             position: absolute; top: 15px; right: 20px; font-size: 28px; color: #aaa; cursor: pointer; line-height: 1;
-            padding: 5px; /* Larger touch target */
+            padding: 5px; z-index: 10;
         }
         html[dir="rtl"] .close-btn { right: auto; left: 20px; }
 
         .modal-title { font-size: 1.4rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 8px; }
-        .modal-desc { font-size: 0.95rem; color: #666; margin-bottom: 15px; line-height: 1.5; }
         
+        /* --- Timeline Styles --- */
+        .timeline-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 20px 10px;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none; scrollbar-width: none; 
+            position: relative;
+            padding-bottom: 30px; 
+        }
+        .timeline-container::-webkit-scrollbar { display: none; }
+        
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0;
+            width: 100%; height: 4px;
+            background: #eee;
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .t-card {
+            background: #fff;
+            min-width: 100px;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex; flex-direction: column; align-items: center;
+            border: 2px solid #eee;
+            position: relative; z-index: 1;
+            opacity: 0.6; filter: grayscale(100%);
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        
+        .t-card.unlocked { opacity: 1; filter: grayscale(0%); border-color: var(--accent-gold); transform: scale(1.05); z-index: 2; box-shadow: 0 8px 15px rgba(255,193,7,0.2); }
+        .t-card.locked-next { opacity: 1; filter: grayscale(0.5); border-color: var(--primary-blue); transform: scale(1.02); }
+
+        .t-img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
+        .t-name { font-size: 0.7rem; font-weight: 700; color: #555; margin-bottom: 2px; line-height: 1.2; text-align: center; }
+        .t-time { font-size: 0.6rem; color: #999; background: #f5f5f5; padding: 2px 6px; border-radius: 10px; margin-top: auto; }
+        .t-card.unlocked .t-time { background: var(--accent-gold); color: #fff; }
+
+        .t-badge {
+            position: absolute; top: -8px; right: -8px;
+            width: 20px; height: 20px; background: var(--success-green);
+            color: white; border-radius: 50%; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
+        }
+        .t-card.unlocked .t-badge { display: flex; }
+
         /* --- History List Styles --- */
         .history-list {
             text-align: left; margin-top: 15px; max-height: 300px; overflow-y: auto; border-top: 1px solid #eee;
@@ -416,7 +468,6 @@
         }
         .history-item span.plus { color: var(--success-green); font-weight: bold; }
         .history-time { color: #aaa; font-size: 0.75rem; margin-left: 5px; }
-        html[dir="rtl"] .history-time { margin-left: 0; margin-right: 5px; }
 
         /* --- Lottery Grid Styles --- */
         .lottery-grid {
@@ -502,29 +553,36 @@
 
         <!-- Stage -->
         <div class="stage">
-            <img id="pet-image" src="" alt="Blue Lion" draggable="false" />
             
-            <!-- NEW: Vertical Growth Sidebar (Entirely Clickable) -->
-            <div id="growth-component" class="growth-sidebar" onclick="game.showNextStageInfo()">
-                <!-- Next Stage Icon -->
-                <div class="growth-icon next">
-                    <img id="next-stage-icon" src="" alt="Next">
+            <!-- NEW: Highlighted Next Reward Widget (Top Left) -->
+            <div id="next-reward-widget" class="next-reward-widget" onclick="game.showTimeline()">
+                <div class="nr-img-box">
+                    <img id="nr-img" src="" alt="Reward">
                 </div>
-                <!-- Vertical Progress Bar -->
-                <div class="v-bar-bg">
-                    <div id="growth-fill" class="v-bar-fill"></div>
-                </div>
-                <!-- Current Stage Icon -->
-                <div class="growth-icon current">
-                    <img id="current-stage-icon" src="" alt="Current">
+                <div class="nr-text-group">
+                    <span class="nr-label" data-key="goal">GOAL</span>
+                    <span id="nr-time" class="nr-time">10m</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Collection -->
-        <div class="collection-wrapper">
-            <div class="collection-title" data-key="collection_title">🏆 Collection</div>
-            <div class="collection-grid" id="collection-grid"></div>
+            <!-- Lion Image -->
+            <img id="pet-image" src="" alt="Blue Lion" draggable="false" />
+            
+            <!-- RIGHT PANEL: Sidebar ONLY -->
+            <div class="right-panel-container">
+                <div id="growth-component" class="growth-sidebar" onclick="game.showTimeline()">
+                    <div class="growth-icon next">
+                        <img id="next-stage-icon" src="" alt="Next">
+                    </div>
+                    <div class="v-bar-bg">
+                        <div id="growth-fill" class="v-bar-fill"></div>
+                    </div>
+                    <div class="growth-icon current">
+                        <img id="current-stage-icon" src="" alt="Current">
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Controls -->
@@ -557,12 +615,16 @@
     </div>
 
     <!-- Modals -->
-    <div id="reward-modal" class="modal-overlay" onclick="game.closeModal('reward-modal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="game.closeModal('reward-modal')">&times;</span>
-            <img id="modal-img" class="modal-img-large" src="" alt="Reward">
-            <div id="modal-title" class="modal-title">Title</div>
-            <div id="modal-desc" class="modal-desc">Description</div>
+    
+    <!-- TIMELINE MODAL -->
+    <div id="timeline-modal" class="modal-overlay" onclick="game.closeModal('timeline-modal')">
+        <div class="modal-content wide" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="game.closeModal('timeline-modal')">&times;</span>
+            <div class="modal-title" data-key="timeline_title">🚀 Growth Journey</div>
+            <div style="font-size:0.8rem; color:#888; margin-bottom:10px;" data-key="timeline_desc">Swipe to see rewards</div>
+            <div class="timeline-container" id="timeline-container">
+                <!-- Javascript will populate cards here -->
+            </div>
         </div>
     </div>
 
@@ -606,7 +668,7 @@ const TRANSLATIONS = {
         warning_sad: "⚠️ Your lion is sad! Growth stopped.",
         stat_hunger: "Hunger", stat_clean: "Clean", stat_mood: "Mood", stat_know: "Study",
         stage_baby: "Baby Lion", stage_kid: "Kid Lion", stage_trendy: "Trendy Lion", stage_gentle: "Gentleman",
-        next_evo: "Next evolution: ", max_level: "Max Level Reached! 👑",
+        next_evo: "Next evolution: ", max_level: "Max Level 👑",
         collection_title: "🏆 Collection",
         msg_hello: "Hello! Take care of me! ❤️",
         btn_feed: "Feed", btn_bath: "Bath", btn_play: "Play", btn_study: "Study",
@@ -616,8 +678,8 @@ const TRANSLATIONS = {
         modal_lottery: "🎁 Lucky Draw", spinning: "Spinning...",
         congrats: "Congratulations!", awesome: "Awesome!",
         won_text: "You won {val} Points!", won_time: "You won {val} mins Speedup!",
-        unlocked: "✨ <b>Unlocked!</b><br>You own this item.",
-        locked: "🔒 <b>Locked</b><br>Need Online: {time}",
+        unlocked: "✨ Unlocked!",
+        locked: "Locked",
         bonus_msg: "✨ Surprise! Growth +{sec}s!",
         not_enough: "Not enough points!",
         lottery_history: "Lottery",
@@ -625,7 +687,13 @@ const TRANSLATIONS = {
         next_stage_hint: "Next stage in {val} mins!", 
         item_moon: "Moon Frame", item_star: "Star Frame", item_gold: "Golden Frame",
         item_red_car: "Red Car", item_blue_car: "Blue Car", item_super_car: "Super Car",
-        item_medal: "Legend Medal"
+        item_medal: "Legend Medal",
+        next_reward: "Next:",
+        timeline_title: "🚀 Growth Journey",
+        timeline_desc: "Swipe to see all rewards",
+        type_stage: "Evolution",
+        type_item: "Reward",
+        goal: "GOAL"
     },
     zh: {
         currency: "积分",
@@ -642,8 +710,8 @@ const TRANSLATIONS = {
         modal_lottery: "🎁 幸运抽奖", spinning: "抽奖中...",
         congrats: "恭喜中奖!", awesome: "太棒了!",
         won_text: "获得了 {val} 积分!", won_time: "获得了 {val} 分钟成长加速!",
-        unlocked: "✨ <b>已解锁!</b><br>你拥有这个物品。",
-        locked: "🔒 <b>未解锁</b><br>需要在线: {time}",
+        unlocked: "✨ 已解锁!",
+        locked: "未解锁",
         bonus_msg: "✨ 惊喜! 成长加速 +{sec}秒!",
         not_enough: "积分不足!",
         lottery_history: "幸运抽奖",
@@ -651,7 +719,13 @@ const TRANSLATIONS = {
         next_stage_hint: "距离下一阶段还有 {val} 分钟!",
         item_moon: "月亮相框", item_star: "星星相框", item_gold: "黄金相框",
         item_red_car: "红色跑车", item_blue_car: "蓝色跑车", item_super_car: "超级赛车",
-        item_medal: "传奇勋章"
+        item_medal: "传奇勋章",
+        next_reward: "下一个:",
+        timeline_title: "🚀 成长日记",
+        timeline_desc: "左右滑动查看所有奖励",
+        type_stage: "进化",
+        type_item: "收藏品",
+        goal: "下一个"
     },
     ar: {
         currency: "ن",
@@ -668,16 +742,22 @@ const TRANSLATIONS = {
         modal_lottery: "🎁 سحب الحظ", spinning: "جاري السحب...",
         congrats: "تهانينا!", awesome: "رائع!",
         won_text: "ربحت {val} نقطة!", won_time: "ربحت {val} دقيقة تسريع!",
-        unlocked: "✨ <b>مفتوح!</b><br>أنت تملك هذا العنصر.",
-        locked: "🔒 <b>مغلق</b><br>تحتاج وقت: {time}",
+        unlocked: "✨ مفتوح!",
+        locked: "مغلق",
         bonus_msg: "✨ مفاجأة! نمو +{sec}ث!",
         not_enough: "نقاط غير كافية!",
         lottery_history: "سحب الحظ",
-        day: "ي", hour: "س", min: "د",
+        day: "ي", hour: "س", min: "d",
         next_stage_hint: "المرحلة القادمة في {val} دقيقة!",
         item_moon: "إطار القمر", item_star: "إطار النجمة", item_gold: "الإطار الذهبي",
         item_red_car: "سيارة حمراء", item_blue_car: "سيارة زرقاء", item_super_car: "سيارة خارقة",
-        item_medal: "ميدالية أسطورية"
+        item_medal: "ميدالية أسطورية",
+        next_reward: "التالي:",
+        timeline_title: "🚀 رحلة النمو",
+        timeline_desc: "اسحب لرؤية المكافآت",
+        type_stage: "تطور",
+        type_item: "مكافأة",
+        goal: "هدف"
     },
     id: {
         currency: "Poin",
@@ -694,8 +774,8 @@ const TRANSLATIONS = {
         modal_lottery: "🎁 Undian", spinning: "Memutar...",
         congrats: "Selamat!", awesome: "Mantap!",
         won_text: "Dapat {val} Poin!", won_time: "Dapat {val} mnt Kecepatan!",
-        unlocked: "✨ <b>Terbuka!</b><br>Milikmu.",
-        locked: "🔒 <b>Terkunci</b><br>Butuh Online: {time}",
+        unlocked: "✨ Terbuka!",
+        locked: "Terkunci",
         bonus_msg: "✨ Kejutan! Tumbuh +{sec}dtk!",
         not_enough: "Poin kurang!",
         lottery_history: "Undian",
@@ -703,7 +783,13 @@ const TRANSLATIONS = {
         next_stage_hint: "Tahap selanjutnya dalam {val} menit!",
         item_moon: "Bingkai Bulan", item_star: "Bingkai Bintang", item_gold: "Bingkai Emas",
         item_red_car: "Mobil Merah", item_blue_car: "Mobil Biru", item_super_car: "Mobil Super",
-        item_medal: "Medali Legenda"
+        item_medal: "Medali Legenda",
+        next_reward: "Berikutnya:",
+        timeline_title: "🚀 Perjalanan",
+        timeline_desc: "Geser untuk lihat hadiah",
+        type_stage: "Evolusi",
+        type_item: "Hadiah",
+        goal: "TUJUAN"
     },
     tr: {
         currency: "Puan",
@@ -720,8 +806,8 @@ const TRANSLATIONS = {
         modal_lottery: "🎁 Çekiliş", spinning: "Dönüyor...",
         congrats: "Tebrikler!", awesome: "Harika!",
         won_text: "{val} Puan Kazandın!", won_time: "{val} dk Hızlandırma Kazandın!",
-        unlocked: "✨ <b>Açık!</b><br>Buna sahipsin.",
-        locked: "🔒 <b>Kilitli</b><br>Gereken Süre: {time}",
+        unlocked: "✨ Açık!",
+        locked: "Kilitli",
         bonus_msg: "✨ Sürpriz! Büyüme +{sec}sn!",
         not_enough: "Puan yetersiz!",
         lottery_history: "Çekiliş",
@@ -729,7 +815,13 @@ const TRANSLATIONS = {
         next_stage_hint: "Sonraki aşama {val} dakika içinde!",
         item_moon: "Ay Çerçevesi", item_star: "Yıldız Çerçevesi", item_gold: "Altın Çerçeve",
         item_red_car: "Kırmızı Araba", item_blue_car: "Mavi Araba", item_super_car: "Süper Araba",
-        item_medal: "Efsane Madalyası"
+        item_medal: "Efsane Madalyası",
+        next_reward: "Sıradaki:",
+        timeline_title: "🚀 Büyüme Yolculuğu",
+        timeline_desc: "Ödülleri görmek için kaydır",
+        type_stage: "Evrim",
+        type_item: "Ödül",
+        goal: "HEDEF"
     }
 };
 
@@ -837,20 +929,20 @@ class Game {
             totalTimeSec: 0, 
             unlockedItems: [],
             history: [],
-            lang: 'en' // Default language
+            lang: 'en'
         };
         this.animTimer = null;
         this.isSad = false;
         this.currentStage = 0; 
         this.notificationTimer = null;
-        this.translations = TRANSLATIONS.en; // Current translation obj
+        this.translations = TRANSLATIONS.en;
     }
 
     init() {
         this.loadData();
-        this.setLanguage(this.state.lang); // Apply saved language
+        this.setLanguage(this.state.lang);
         this.updateGrowthStage(); 
-        this.renderCollectionGrid(); 
+        this.updateNextRewardWidget(); // Initial Widget Render
         this.preloadImages();
         this.setupTimers();
         this.render();
@@ -858,12 +950,10 @@ class Game {
         this.checkBackground();
     }
 
-    // --- NEW: Language Handling ---
     setLanguage(lang) {
         this.state.lang = lang;
         this.translations = TRANSLATIONS[lang] || TRANSLATIONS.en;
         
-        // Update RTL
         if (lang === 'ar') {
             document.documentElement.setAttribute('dir', 'rtl');
             document.documentElement.lang = 'ar';
@@ -872,10 +962,7 @@ class Game {
             document.documentElement.lang = lang;
         }
 
-        // Update Dropdown UI
         document.getElementById('lang-select').value = lang;
-
-        // Update all data-key elements
         this.updateText();
         this.saveData();
     }
@@ -886,13 +973,11 @@ class Game {
             const key = el.getAttribute('data-key');
             if (t[key]) el.innerText = t[key];
         });
-        // Force refresh dynamic text (growth bar, lottery button etc)
         this.renderGrowth();
         this.updateLotteryButton();
-        this.renderCollectionGrid(); // Re-render to update names if needed
+        this.updateNextRewardWidget(); // Refresh widget text
     }
 
-    // Helper to get text safe
     getText(key) {
         return this.translations[key] || key;
     }
@@ -910,18 +995,93 @@ class Game {
         }
     }
 
-    // --- NEW: Show remaining time on click ---
-    showNextStageInfo() {
-        const nextStageObj = LION_STAGES[this.currentStage + 1];
-        if (!nextStageObj) return;
+    getAllMilestones() {
+        let list = [];
+        LION_STAGES.forEach((s, idx) => {
+            if (idx > 0) {
+                list.push({
+                    type: 'stage',
+                    time: s.minMinutes,
+                    src: s.assets.idle,
+                    name: s.name_key,
+                    displayType: 'type_stage'
+                });
+            }
+        });
+        ACHIEVEMENTS.forEach(a => {
+            list.push({
+                type: 'item',
+                id: a.id,
+                time: a.timeMin,
+                src: a.img,
+                name: a.name_key,
+                displayType: 'type_item'
+            });
+        });
+        return list.sort((a,b) => a.time - b.time);
+    }
+
+    updateNextRewardWidget() {
+        const currentMins = this.state.totalTimeSec / 60;
+        const all = this.getAllMilestones();
+        const next = all.find(m => m.time > currentMins);
+
+        const wImg = document.getElementById('nr-img');
+        const wTime = document.getElementById('nr-time');
+
+        if (next) {
+            wImg.src = next.src;
+            const left = Math.ceil(next.time - currentMins);
+            wTime.innerText = this.formatTimeReq(left, true); 
+        } else {
+            wImg.src = LION_STAGES[LION_STAGES.length-1].assets.idle;
+            wTime.innerText = "MAX";
+        }
+    }
+
+    showTimeline() {
+        const modal = document.getElementById('timeline-modal');
+        const container = document.getElementById('timeline-container');
+        container.innerHTML = '';
 
         const currentMins = this.state.totalTimeSec / 60;
-        const targetMins = nextStageObj.minMinutes;
-        const remaining = Math.ceil(targetMins - currentMins);
-        
-        // Show hint in notification bar
-        const msg = this.getText('next_stage_hint').replace('{val}', remaining);
-        this.showNotification(msg);
+        const all = this.getAllMilestones();
+        let scrollTarget = null;
+
+        all.forEach((item, index) => {
+            const isUnlocked = currentMins >= item.time;
+            const card = document.createElement('div');
+            card.className = 't-card';
+            
+            if (isUnlocked) {
+                card.classList.add('unlocked');
+            } else if (!scrollTarget) {
+                card.classList.add('locked-next');
+                scrollTarget = card;
+            }
+
+            const name = this.getText(item.name);
+            const timeText = this.formatTimeReq(item.time);
+
+            card.innerHTML = `
+                <div class="t-badge">✓</div>
+                <img src="${item.src}" class="t-img" alt="${name}">
+                <div class="t-name">${name}</div>
+                <div class="t-time">${isUnlocked ? this.getText('unlocked') : timeText}</div>
+            `;
+            container.appendChild(card);
+        });
+
+        modal.style.display = 'flex';
+
+        if (scrollTarget) {
+            setTimeout(() => {
+                const offset = scrollTarget.offsetLeft - container.offsetWidth/2 + scrollTarget.offsetWidth/2;
+                container.scrollTo({ left: offset, behavior: 'smooth' });
+            }, 100);
+        } else {
+            setTimeout(() => container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' }), 100);
+        }
     }
 
     getCurrentAssets() {
@@ -935,50 +1095,6 @@ class Game {
             });
         });
         ACHIEVEMENTS.forEach(item => { const img = new Image(); img.src = item.img; });
-    }
-
-    renderCollectionGrid() {
-        const grid = document.getElementById('collection-grid');
-        grid.innerHTML = '';
-        ACHIEVEMENTS.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'collect-item';
-            div.id = `item-${item.id}`;
-            div.onclick = () => this.openModal(item);
-            
-            // Name uses name_key for translation
-            div.innerHTML = `
-                <div class="lock-icon">🔒</div>
-                <img src="${item.img}" class="collect-img" alt="${item.name_key}">
-                <div class="collect-name">${this.getText(item.name_key)}</div>
-                <div class="collect-time">${this.formatTimeReq(item.timeMin)}</div>
-            `;
-            grid.appendChild(div);
-        });
-        this.updateCollectionVisuals();
-    }
-
-    openModal(item) {
-        const modal = document.getElementById('reward-modal');
-        const img = document.getElementById('modal-img');
-        const title = document.getElementById('modal-title');
-        const desc = document.getElementById('modal-desc');
-
-        img.src = item.img;
-        title.innerText = this.getText(item.name_key);
-
-        const isUnlocked = this.state.unlockedItems.includes(item.id);
-        
-        if(isUnlocked) {
-            img.style.filter = "none";
-            desc.innerHTML = this.getText('unlocked');
-            desc.style.color = "var(--success-green)";
-        } else {
-            img.style.filter = "grayscale(100%)";
-            desc.innerHTML = this.getText('locked').replace('{time}', this.formatTimeReq(item.timeMin));
-            desc.style.color = "#888";
-        }
-        modal.style.display = 'flex';
     }
 
     closeModal(id) {
@@ -995,7 +1111,12 @@ class Game {
         }, 5000);
     }
 
-    formatTimeReq(min) {
+    formatTimeReq(min, short = false) {
+        if (short) {
+            if(min >= 1440) return (min/1440).toFixed(1) + this.getText('day');
+            if(min >= 60) return (min/60).toFixed(0) + "h " + (min%60) + "m";
+            return min + "m";
+        }
         if(min >= 1440) return (min/1440).toFixed(1) + this.getText('day');
         if(min >= 60) return (min/60).toFixed(1) + this.getText('hour');
         return min + this.getText('min');
@@ -1037,15 +1158,6 @@ class Game {
             time: Date.now()
         });
         if (this.state.history.length > 50) this.state.history.shift();
-    }
-
-    updateCollectionVisuals() {
-        ACHIEVEMENTS.forEach(item => {
-            const el = document.getElementById(`item-${item.id}`);
-            if (this.state.unlockedItems.includes(item.id)) {
-                el.classList.add('unlocked');
-            }
-        });
     }
 
     setupTimers() {
@@ -1103,7 +1215,7 @@ class Game {
             }
         });
         if (newUnlock) {
-            this.updateCollectionVisuals();
+            this.updateNextRewardWidget();
             this.saveData();
         }
     }
@@ -1113,7 +1225,6 @@ class Game {
         this.renderPoints();
         this.renderTime();
         this.renderGrowth();
-        this.updateCollectionVisuals();
     }
 
     renderGrowth() {
@@ -1121,31 +1232,23 @@ class Game {
         const currentStageObj = LION_STAGES[this.currentStage];
         const nextStageObj = LION_STAGES[this.currentStage + 1];
 
-        // --- NEW: Update Vertical Sidebar UI ---
         const nextIcon = document.getElementById('next-stage-icon');
         const currentIcon = document.getElementById('current-stage-icon');
         const fill = document.getElementById('growth-fill');
-        const sidebar = document.getElementById('growth-component');
 
-        // Check Max Level
         if (!nextStageObj) {
-            sidebar.style.display = 'none';
-            return;
+            fill.style.height = '100%';
+            nextIcon.src = currentStageObj.assets.idle; 
         } else {
-            sidebar.style.display = 'flex';
+            if (currentIcon.src !== currentStageObj.assets.idle) currentIcon.src = currentStageObj.assets.idle;
+            if (nextIcon.src !== nextStageObj.assets.idle) nextIcon.src = nextStageObj.assets.idle;
+
+            const startMins = currentStageObj.minMinutes;
+            const targetMins = nextStageObj.minMinutes;
+            const progress = ((currentMins - startMins) / (targetMins - startMins)) * 100;
+            fill.style.height = `${Math.min(100, Math.max(0, progress))}%`;
         }
-
-        // Update Icons (Only if src changes to avoid flicker)
-        if (currentIcon.src !== currentStageObj.assets.idle) currentIcon.src = currentStageObj.assets.idle;
-        if (nextIcon.src !== nextStageObj.assets.idle) nextIcon.src = nextStageObj.assets.idle;
-
-        // Calculate Progress
-        const startMins = currentStageObj.minMinutes;
-        const targetMins = nextStageObj.minMinutes;
-        const progress = ((currentMins - startMins) / (targetMins - startMins)) * 100;
-        
-        // Update Bar Height
-        fill.style.height = `${Math.min(100, Math.max(0, progress))}%`;
+        this.updateNextRewardWidget();
     }
 
     renderStats() {
@@ -1186,8 +1289,6 @@ class Game {
         this.setPetState(cfg.anim, cfg.duration);
         this.playSound('action');
         
-        // --- UPDATED: Removed Cost Toast ---
-        // Only showing benefit toast
         setTimeout(() => {
             this.showToast(`+${cfg.amount} ❤️`, null, null, 'gain');
         }, 100);
@@ -1273,18 +1374,13 @@ class Game {
         const rand = Math.random();
         let winningIndex = 0; 
 
-        // UPDATED: New Probabilities & Items
-        // 0:30m(1%), 1:15m(3%), 2:10m(6%), 3:5m(10%)
-        // 5:600p(10%), 6:300p(20%), 7:100p(50%), 8:100p(50% split)
-        
-        // Let's use a simpler range logic:
-        if (rand > 0.99) winningIndex = 0; // 30m (1%)
-        else if (rand > 0.96) winningIndex = 1; // 15m (3%)
-        else if (rand > 0.90) winningIndex = 2; // 10m (6%)
-        else if (rand > 0.80) winningIndex = 3; // 5m (10%)
-        else if (rand > 0.70) winningIndex = 5; // 600p (10%)
-        else if (rand > 0.50) winningIndex = 6; // 300p (20%)
-        else winningIndex = 8; // 100p (Remaining 50%) -> mapped to index 8 visually
+        if (rand > 0.99) winningIndex = 0; 
+        else if (rand > 0.96) winningIndex = 1; 
+        else if (rand > 0.90) winningIndex = 2; 
+        else if (rand > 0.80) winningIndex = 3; 
+        else if (rand > 0.70) winningIndex = 5; 
+        else if (rand > 0.50) winningIndex = 6; 
+        else winningIndex = 8; 
 
         this.runLotteryAnimation(winningIndex);
         
@@ -1340,17 +1436,16 @@ class Game {
         document.getElementById('lottery-modal').style.display = 'none';
         const item = LOTTERY_ITEMS[index];
         
-        // Handle Prize Type
         let resultText = "";
         if(item.type === 'point') {
             this.state.points += item.val;
             resultText = this.getText('won_text').replace('{val}', item.val);
             this.addToHistory('lottery', item.val, 'lottery', '🌹');
         } else if (item.type === 'time') {
-            this.state.totalTimeSec += (item.val * 60); // Convert mins to seconds
+            this.state.totalTimeSec += (item.val * 60); 
             resultText = this.getText('won_time').replace('{val}', item.val);
             this.addToHistory('lottery', item.val + 'm', 'lottery', '⏳');
-            this.renderTime(); // Immediate update
+            this.renderTime(); 
             this.renderGrowth();
         }
 
@@ -1403,8 +1498,6 @@ class Game {
         document.body.appendChild(el);
         setTimeout(() => el.remove(), 1000);
     }
-    
-    log(msg) { document.getElementById('message-log').innerText = msg; }
     
     checkBackground() {
         const h = new Date().getHours();
