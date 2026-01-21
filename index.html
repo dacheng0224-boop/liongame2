@@ -12,7 +12,7 @@
             --text-color: #333333;
             --danger-red: #FF5252;
             --success-green: #4CAF50;
-            --card-bg: rgba(255, 255, 255, 0.90); 
+            --card-bg: rgba(255, 255, 255, 0.85); 
         }
 
         * {
@@ -31,6 +31,7 @@
             flex-direction: column;
             color: var(--text-color);
             overflow: hidden;
+            
             background: linear-gradient(-45deg, #e0c3fc, #8ec5fc, #90f7ec, #ffecd2);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
@@ -42,7 +43,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* --- Background Blobs --- */
         .bg-blob {
             position: absolute;
             border-radius: 50%;
@@ -51,283 +51,465 @@
             z-index: 0;
             animation: floatBlob 20s infinite alternate;
         }
-        .blob-1 { width: 200px; height: 200px; background: rgba(255, 152, 0, 0.4); top: 10%; left: -50px; }
-        .blob-2 { width: 250px; height: 250px; background: rgba(74, 144, 226, 0.4); bottom: 20%; right: -60px; animation-delay: -10s; }
-        @keyframes floatBlob { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(20px, 40px) scale(1.1); } }
+        .blob-1 {
+            width: 200px; height: 200px;
+            background: rgba(255, 152, 0, 0.4);
+            top: 10%; left: -50px;
+        }
+        .blob-2 {
+            width: 250px; height: 250px;
+            background: rgba(74, 144, 226, 0.4);
+            bottom: 20%; right: -60px;
+            animation-delay: -10s;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(20px, 40px) scale(1.1); }
+        }
+
+        /* --- Global Notification Bar --- */
+        #notification-bar {
+            position: absolute;
+            top: 155px; 
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            width: 85%;
+            background: rgba(255, 152, 0, 0.95);
+            backdrop-filter: blur(5px);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 900;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        #notification-bar.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
 
         /* --- Warning Banner --- */
         #sad-warning {
-            position: absolute; top: 0; left: 0; width: 100%;
-            background: var(--danger-red); color: white;
-            text-align: center; font-size: 0.8rem;
-            padding: 5px; padding-top: max(5px, env(safe-area-inset-top));
-            font-weight: bold; display: none; z-index: 999;
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            background: var(--danger-red);
+            color: white;
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 5px; 
+            padding-top: max(5px, env(safe-area-inset-top));
+            font-weight: bold;
+            display: none; 
+            z-index: 300;
         }
 
-        /* --- HEADER --- */
+        /* --- Header --- */
         .header {
             padding: max(10px, env(safe-area-inset-top)) 15px 10px 15px;
             background: rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(15px);
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             z-index: 200;
             flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 12px; /* Increased gap for better spacing */
+            position: relative;
             border-bottom: 1px solid rgba(255,255,255,0.5);
         }
 
-        /* Row 1: Nav (Lang + Help) */
-        .nav-row {
-            display: flex; justify-content: space-between; align-items: center;
-            height: 30px;
+        .header-top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .rules-btn {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            color: #555;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         #lang-select {
             appearance: none; -webkit-appearance: none;
             background-color: rgba(255, 255, 255, 0.7);
             border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 4px 12px; font-size: 0.75rem; color: #555; font-weight: 600;
-            outline: none; text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); outline: none; text-align: center;
         }
 
-        .help-btn {
-            width: 30px; height: 30px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: var(--primary-blue);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border: 1px solid rgba(0,0,0,0.05);
-            cursor: pointer;
-        }
-
-        /* Row 2: Info (Points & Time) */
-        .info-row {
+        .top-row {
             display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; margin-top: 5px; 
         }
-        .info-pill {
-            background: rgba(255, 255, 255, 0.8); 
-            padding: 6px 14px; border-radius: 20px;
-            font-size: 0.95rem; font-weight: 800; color: #444;
-            display: flex; align-items: center; gap: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            border: 1px solid rgba(255,255,255,0.6);
-        }
-        .points-text { color: var(--primary-blue); }
-        .time-text { font-family: monospace; letter-spacing: -0.5px; }
 
-        /* Row 3: Stats (Single Row) */
-        .stats-row {
-            display: flex; gap: 8px; width: 100%;
+        .points-display { 
+            font-size: 1.1rem; font-weight: 800; color: var(--primary-blue); 
+            display: flex; align-items: center; gap: 5px;
+            background: rgba(255, 255, 255, 0.8); padding: 6px 14px; border-radius: 20px;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        .stat-pill {
-            flex: 1;
-            height: 24px;
-            background: rgba(0,0,0,0.05);
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.5);
+        .points-display:active { transform: scale(0.95); opacity: 0.8; }
+
+        .time-display { 
+            font-size: 0.9rem; color: #555; background: rgba(255, 255, 255, 0.8); 
+            padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.8);
+            font-weight: bold; font-family: monospace;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        .stat-fill {
-            position: absolute; top: 0; left: 0; height: 100%; width: 100%;
-            background: var(--success-green);
-            transition: width 0.5s ease, background-color 0.3s;
-            opacity: 0.3; 
+
+        /* --- Compact Stats --- */
+        .stats-container { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 8px; 
+            background: rgba(255,255,255,0.4);
+            padding: 8px;
+            border-radius: 16px;
         }
-        .stat-content {
-            position: relative; z-index: 2;
-            display: flex; align-items: center; justify-content: center;
-            height: 100%; font-size: 0.65rem; font-weight: 700; color: #333;
-            gap: 2px;
+        .stat-item { 
+            display: flex; flex-direction: column; gap: 4px; align-items: center; 
         }
+        .stat-info {
+            display: flex; align-items: center; gap: 3px;
+            width: 100%; justify-content: center;
+        }
+        .stat-icon { font-size: 0.9rem; }
+        .stat-val { font-size: 0.75rem; font-weight: 800; color: #555; }
         
-        /* --- Main Stage Area --- */
+        .progress-bar-bg { 
+            height: 5px;
+            width: 100%;
+            background: rgba(0,0,0,0.05); 
+            border-radius: 3px; 
+            overflow: hidden; 
+            direction: ltr; 
+        }
+        .progress-bar-fill { height: 100%; width: 100%; background: var(--success-green); transition: width 0.5s ease; }
+
+        /* --- Main Content --- */
         .main-content {
             flex: 1;
+            overflow-y: hidden; 
             display: flex;
             flex-direction: column;
             justify-content: space-between; 
             z-index: 5; 
-            position: relative;
-            overflow: hidden;
         }
 
-        /* Notification Bar (Lowered to avoid overlap) */
-        #notification-bar {
-            position: absolute;
-            top: 75px; /* Pushed down safely below the Goal Widget */
-            left: 50%;
-            transform: translateX(-50%) translateY(-10px);
-            width: auto; max-width: 85%;
-            background: rgba(255, 152, 0, 0.95);
-            backdrop-filter: blur(5px);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            text-align: center; font-weight: bold; font-size: 0.8rem;
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
-            opacity: 0; pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            z-index: 800; white-space: nowrap;
-        }
-        #notification-bar.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .growth-header-text { display: none; }
 
         .stage {
             flex: 1;
+            min-height: 250px; 
+            display: flex;
+            justify-content: center; 
+            align-items: center;     
             position: relative;
             width: 100%;
-            display: flex; justify-content: center; align-items: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
         }
 
         #pet-image {
-            max-width: 55%; max-height: 60%;
+            max-width: 55%;
+            max-height: 75%;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.1s;
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); 
-            z-index: 5; margin-top: 20px; 
-            cursor: pointer; /* Clickable cursor */
+            z-index: 5;
+            transform: translateX(0); 
         }
         #pet-image:active { transform: scale(0.95); }
 
-        /* --- Left Widget (Next Reward) --- */
+        /* --- Floating Reward Widget --- */
         .next-reward-widget {
             position: absolute;
-            top: 15px; left: 15px; 
-            z-index: 20;
+            top: 60px; 
+            left: 20px;
+            z-index: 20; 
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(5px);
             border: 2px solid var(--accent-gold);
             border-radius: 25px;
-            padding: 5px 12px 5px 5px;
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+            padding: 6px 14px 6px 6px; 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
             animation: floatWidget 3s ease-in-out infinite;
-            cursor: pointer; transition: transform 0.2s;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-        html[dir="rtl"] .next-reward-widget { left: auto; right: 15px; padding: 5px 5px 5px 12px; }
-        
-        @keyframes floatWidget { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-        
-        .nr-img-box { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; }
-        .nr-img-box img { width: 100%; height: 100%; object-fit: contain; }
-        .nr-text-group { display: flex; flex-direction: column; justify-content: center; line-height: 1; }
-        .nr-label { font-size: 0.55rem; color: #888; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
-        .nr-time { font-size: 0.85rem; color: var(--primary-blue); font-weight: 900; }
+        html[dir="rtl"] .next-reward-widget { left: auto; right: 20px; padding: 6px 6px 6px 14px; }
+        .next-reward-widget:active { transform: scale(0.95); }
 
-        /* --- Right Sidebar (Growth) --- */
+        @keyframes floatWidget {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); box-shadow: 0 10px 20px rgba(255, 193, 7, 0.5); }
+        }
+
+        .nr-img-box {
+            width: 38px; height: 38px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nr-img-box img { 
+            width: 100%; height: 100%; object-fit: contain; 
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .nr-text-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        html[dir="rtl"] .nr-text-group { align-items: flex-end; }
+
+        .nr-label { 
+            font-size: 0.6rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;
+        }
+        .nr-time { 
+            font-size: 0.9rem; color: var(--primary-blue); font-weight: 900; line-height: 1;
+        }
+
+        /* --- RIGHT PANEL --- */
         .right-panel-container {
             position: absolute;
-            right: 15px; top: 50%;
+            right: 20px;
+            top: 50%;
             transform: translateY(-50%);
             z-index: 10;
         }
-        html[dir="rtl"] .right-panel-container { right: auto; left: 15px; }
+        html[dir="rtl"] .right-panel-container { right: auto; left: 20px; }
 
         .growth-sidebar {
-            display: flex; flex-direction: column; align-items: center; gap: 6px;
-            padding: 8px 6px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 8px; 
             background: rgba(255, 255, 255, 0.4); 
             backdrop-filter: blur(8px);
             border-radius: 30px;
             border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            cursor: pointer; transition: transform 0.1s;
+            cursor: pointer;
+            transition: transform 0.1s;
         }
-        .growth-sidebar:active { transform: translateY(-50%) scale(0.95); }
+        .growth-sidebar:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.6); }
 
         .growth-icon {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95); border: 2px solid #fff;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
-        .growth-icon img { width: 85%; height: 85%; object-fit: contain; }
-        .v-bar-bg { width: 10px; height: 80px; background: rgba(255,255,255,0.5); border-radius: 5px; position: relative; }
+        .growth-icon img { width: 90%; height: 90%; object-fit: contain; }
+        .growth-icon.next { border-color: rgba(255,255,255,0.6); opacity: 0.9; }
+        .growth-icon.current { border-color: var(--accent-gold); box-shadow: 0 0 12px rgba(255, 193, 7, 0.5); }
+
+        .v-bar-bg {
+            width: 14px; height: 100px; 
+            background: rgba(255,255,255,0.5);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+        }
         .v-bar-fill {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; 
-            background: linear-gradient(to top, #FF9800, #FFEB3B); border-radius: 5px;
+            position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 0%; 
+            background: linear-gradient(to top, #FF9800, #FFEB3B);
+            border-radius: 10px;
             transition: height 0.5s ease;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
         }
 
         /* --- Controls --- */
         .controls-wrapper { padding: 0 15px 30px 15px; flex-shrink: 0; z-index: 5; }
         .controls {
-            background: var(--card-bg); backdrop-filter: blur(15px);
-            border-radius: 24px; padding: 15px;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 24px; padding: 20px;
             box-shadow: 0 -4px 30px rgba(0,0,0,0.05); 
-            display: flex; flex-direction: column; gap: 10px;
+            display: flex; flex-direction: column; gap: 12px;
             border: 1px solid rgba(255,255,255,0.6);
         }
-        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .btn {
             background: white; border: 1px solid #eee; color: var(--text-color);
-            padding: 8px 2px; border-radius: 14px; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 65px; box-shadow: 0 3px 6px rgba(0,0,0,0.03);
+            padding: 10px 2px; border-radius: 16px; font-size: 0.8rem; font-weight: bold;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 70px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: all 0.2s;
         }
-        .btn:active { background: #f9f9f9; transform: scale(0.96); }
-        .btn i { font-size: 1.3rem; margin-bottom: 2px; }
-        .btn span.lbl { font-size: 0.75rem; font-weight: bold; }
-        .btn span.cost { font-size: 0.6rem; color: #999; margin-top: 1px; }
+        .btn:active { background: #f9f9f9; transform: scale(0.95); }
+        .btn i { font-size: 1.4rem; margin-bottom: 3px; }
+        .btn span { font-size: 0.6rem; color: #888; margin-top: 2px; }
         
         .btn-lottery {
-            background: linear-gradient(135deg, #FF9F43, #FFC107); border: none; color: white;
-            padding: 12px; font-size: 0.95rem; width: 100%; border-radius: 14px;
-            font-weight: 800; box-shadow: 0 5px 12px rgba(255, 152, 0, 0.25);
+            background: linear-gradient(135deg, #FF9F43, #FFC107); 
+            border: none; color: white;
+            padding: 14px; font-size: 1rem; width: 100%; border-radius: 16px;
+            font-weight: 800;
+            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .btn-lottery:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
-        #message-log { text-align: center; font-size: 0.8rem; color: #888; height: 18px; margin-bottom: -5px; }
+        #message-log { text-align: center; font-size: 0.85rem; color: #888; height: 20px; }
 
-        /* --- Common Modal --- */
+        /* --- Modal Styles --- */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); z-index: 2000;
+            background: rgba(0, 0, 0, 0.6); z-index: 1000;
             justify-content: center; align-items: center; animation: fadeIn 0.2s;
             backdrop-filter: blur(4px);
         }
         .modal-content {
-            background: white; padding: 25px 20px; border-radius: 24px;
-            width: 88%; max-width: 340px; text-align: center; position: relative;
+            background: white; padding: 30px 20px; border-radius: 24px;
+            width: 85%; max-width: 320px; text-align: center; position: relative;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popIn 0.3s;
-            max-height: 85vh; overflow-y: auto; 
+            max-height: 80vh; overflow-y: auto; 
         }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #aaa; padding: 5px; cursor: pointer; }
+        .modal-content.wide { max-width: 95%; width: 95%; padding: 25px 10px; }
+
+        .close-btn {
+            position: absolute; top: 15px; right: 20px; font-size: 28px; color: #aaa; cursor: pointer; line-height: 1;
+            padding: 5px; z-index: 10;
+        }
         html[dir="rtl"] .close-btn { right: auto; left: 20px; }
-        .modal-title { font-size: 1.3rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 15px; }
 
-        /* --- Rules Modal Content --- */
-        .rules-section { text-align: left; margin-bottom: 15px; font-size: 0.9rem; color: #555; line-height: 1.5; }
-        html[dir="rtl"] .rules-section { text-align: right; }
-        .rules-title { font-weight: 700; color: #333; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
-        .rules-icon { font-size: 1.1rem; }
-
-        /* --- Other Modals & Floaters --- */
-        .floater { position: absolute; font-weight: bold; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 20; white-space: nowrap; }
-        .floater.gain { color: var(--success-green); font-size: 1.4rem; text-shadow: 1px 1px 0px #fff; }
-        .floater.bonus { color: #FF9800; font-size: 1.6rem; text-shadow: 0px 0px 5px #fff; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); } 100% { opacity: 0; transform: translate(-50%, -60px) scale(1); } }
+        .modal-title { font-size: 1.4rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 8px; }
         
-        /* Timeline */
-        .timeline-container { display: flex; overflow-x: auto; gap: 12px; padding: 10px 5px 20px 5px; scroll-behavior: smooth; }
-        .timeline-container::-webkit-scrollbar { display: none; }
-        .t-card { 
-            min-width: 90px; border-radius: 12px; padding: 8px; display: flex; flex-direction: column; align-items: center;
-            border: 2px solid #eee; opacity: 0.6; filter: grayscale(100%); transition: 0.3s;
-        }
-        .t-card.unlocked { opacity: 1; filter: grayscale(0%); border-color: var(--accent-gold); transform: scale(1.05); }
-        .t-img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 4px; }
-        .t-name { font-size: 0.65rem; font-weight: 700; text-align: center; }
+        /* Rules */
+        .rules-section { text-align: left; margin-bottom: 15px; }
+        html[dir="rtl"] .rules-section { text-align: right; }
+        .rules-header { font-weight: 800; color: var(--accent-orange); margin-bottom: 5px; font-size: 0.95rem; }
+        .rules-text { font-size: 0.85rem; color: #555; line-height: 1.5; }
 
-        /* Lottery */
-        .lottery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 15px; }
-        .lottery-item { aspect-ratio: 1; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; border: 2px solid transparent; }
-        .lottery-item.active { background: #fff8e1; border-color: #FFC107; transform: scale(1.05); }
+        /* --- Timeline (Collection) Styles UPDATED --- */
+        .timeline-container {
+            display: flex; overflow-x: auto; gap: 12px; padding: 20px 10px;
+            scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; 
+            position: relative; padding-bottom: 30px; 
+        }
+        .timeline-container::-webkit-scrollbar { display: none; }
+        .timeline-container::before {
+            content: ''; position: absolute; top: 40%; left: 0;
+            width: 100%; height: 4px; background: #eee; z-index: 0; transform: translateY(-50%);
+        }
+
+        .t-card {
+            background: #fff; min-width: 110px; border-radius: 12px; padding: 10px;
+            display: flex; flex-direction: column; align-items: center;
+            border: 2px solid #eee; position: relative; z-index: 1;
+            opacity: 0.6; filter: grayscale(100%); transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            /* Increased height to fit duration text clearly */
+            min-height: 140px; 
+            justify-content: space-between;
+        }
+        .t-card.unlocked { 
+            opacity: 1; filter: grayscale(0%); 
+            border-color: var(--accent-gold); 
+            transform: scale(1.05); z-index: 2; 
+            box-shadow: 0 8px 15px rgba(255,193,7,0.2); 
+        }
+        .t-card.locked-next { 
+            opacity: 1; filter: grayscale(0.5); 
+            border-color: var(--primary-blue); 
+            transform: scale(1.02); 
+        }
+        
+        .t-img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; margin-top: 5px; }
+        .t-name { 
+            font-size: 0.7rem; font-weight: 700; color: #555; 
+            line-height: 1.2; text-align: center; margin-bottom: 4px;
+        }
+        
+        /* New Styles for Status and Requirement */
+        .t-status-pill {
+            font-size: 0.55rem; padding: 2px 6px; border-radius: 8px;
+            background: #eee; color: #999; margin-bottom: 4px; font-weight: bold;
+        }
+        .t-card.unlocked .t-status-pill { background: var(--success-green); color: white; }
+        .t-card.locked-next .t-status-pill { background: var(--primary-blue); color: white; }
+
+        .t-req-text {
+            font-size: 0.6rem; color: #888; background: #f8f9fa;
+            width: 100%; text-align: center; padding: 4px; border-radius: 6px;
+            font-weight: 600; border: 1px solid #eee;
+        }
+
+        .t-badge {
+            position: absolute; top: -8px; right: -8px;
+            width: 20px; height: 20px; background: var(--success-green);
+            color: white; border-radius: 50%; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none;
+        }
+        .t-card.unlocked .t-badge { display: flex; }
+
+        /* --- History List Styles --- */
+        .history-list { text-align: left; margin-top: 15px; max-height: 300px; overflow-y: auto; border-top: 1px solid #eee; }
+        html[dir="rtl"] .history-list { text-align: right; }
+        .history-item { padding: 12px 0; border-bottom: 1px solid #f9f9f9; font-size: 0.9rem; display: flex; justify-content: space-between; color: #555; }
+        .history-item span.plus { color: var(--success-green); font-weight: bold; }
+        .history-time { color: #aaa; font-size: 0.75rem; margin-left: 5px; }
+
+        /* --- Lottery Grid Styles --- */
+        .lottery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+        .lottery-item {
+            aspect-ratio: 1; background: #f8f9fa; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: bold; color: #555;
+            border: 2px solid transparent; position: relative;
+            flex-direction: column; gap: 5px;
+        }
+        .lottery-item.active {
+            background: #fff8e1; border-color: #FFC107;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+            transform: scale(1.05); z-index: 10;
+        }
+        
+        /* New Lottery Result Styles */
+        .lottery-res-icon { font-size: 3.5rem; margin-bottom: 10px; display: block; }
+        .lottery-res-val { font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); line-height: 1.2; }
+        .lottery-res-label { font-size: 0.9rem; color: #888; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- Floaters --- */
+        .floater { position: absolute; font-weight: bold; animation: floatUp 0.8s forwards; pointer-events: none; z-index: 20; text-shadow: 0 0 2px white; white-space: nowrap; }
+        .floater.gain { color: var(--success-green); font-size: 1.5rem; z-index: 25; text-shadow: 1px 1px 0px #fff; }
+        .floater.bonus { color: #FF9800; font-size: 1.8rem; z-index: 30; text-shadow: 0 0 5px white; } 
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); }
+            50% { transform: translate(-50%, -40px) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -80px) scale(1); }
+        }
 
         @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-        @keyframes popIn { from {transform: scale(0.9);} to {transform: scale(1);} }
+        @keyframes popIn { from {transform: scale(0.8);} to {transform: scale(1);} }
 
     </style>
 </head>
@@ -337,100 +519,127 @@
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
 
-    <!-- Sadness Warning -->
-    <div id="sad-warning" data-key="warning_sad">⚠️ Your lion is sad! Growth stopped.</div>
+    <!-- Sadness Warning Banner -->
+    <div id="sad-warning" data-key="warning_sad">⚠️ Your lion is sad! Growth stopped. Please feed him!</div>
 
-    <!-- Header (Optimized Layout) -->
+    <!-- Top Notification Bar -->
+    <div id="notification-bar"></div>
+
+    <!-- Header -->
     <div class="header">
-        <!-- Row 1: Nav -->
-        <div class="nav-row">
-            <select id="lang-select" onchange="game.setLanguage(this.value)">
-                <option value="en">🌐 English</option>
-                <option value="zh">🌐 中文</option>
-                <option value="ar">🌐 العربية</option>
-                <option value="id">🌐 Indonesia</option>
-                <option value="tr">🌐 Türkçe</option>
-            </select>
-            <div class="help-btn" onclick="game.showRules()">?</div>
-        </div>
+        <div class="header-top-controls">
+            <button class="rules-btn" onclick="game.showRules()">
+                ❓ <span data-key="btn_rules">Rules</span>
+            </button>
 
-        <!-- Row 2: Info -->
-        <div class="info-row">
-            <div class="info-pill" onclick="game.showHistory()">
-                🌹 <span id="score-val" class="points-text">0</span>
-            </div>
-            <div class="info-pill">
-                ⏳ <span id="time-val" class="time-text">00:00:00</span>
+            <div class="lang-switch-container" style="position: static;">
+                <select id="lang-select" onchange="game.setLanguage(this.value)">
+                    <option value="en">🌐 English</option>
+                    <option value="zh">🌐 中文</option>
+                    <option value="ar">🌐 العربية</option>
+                    <option value="id">🌐 Indonesia</option>
+                    <option value="tr">🌐 Türkçe</option>
+                </select>
             </div>
         </div>
 
-        <!-- Row 3: Compact Stats (Single Row Pills) -->
-        <div class="stats-row">
-            <div class="stat-pill">
-                <div class="stat-fill" id="bar-hunger"></div>
-                <div class="stat-content"><span>🍖</span> <span id="val-hunger">100%</span></div>
+        <div class="top-row">
+            <div class="points-display" onclick="game.showHistory()">
+                🌹 <span id="score-val">0</span> <span data-key="currency">Pts</span>
             </div>
-            <div class="stat-pill">
-                <div class="stat-fill" id="bar-hygiene"></div>
-                <div class="stat-content"><span>🛁</span> <span id="val-hygiene">100%</span></div>
+            <div class="time-display">
+                ⏳ <span id="time-val">00:00:00</span>
             </div>
-            <div class="stat-pill">
-                <div class="stat-fill" id="bar-mood"></div>
-                <div class="stat-content"><span>⚽</span> <span id="val-mood">100%</span></div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-info">
+                    <span class="stat-icon">🍖</span>
+                    <span class="stat-val" id="val-hunger">100%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-hunger"></div></div>
             </div>
-            <div class="stat-pill">
-                <div class="stat-fill" id="bar-knowledge"></div>
-                <div class="stat-content"><span>📚</span> <span id="val-knowledge">100%</span></div>
+            <div class="stat-item">
+                <div class="stat-info">
+                    <span class="stat-icon">🛁</span>
+                    <span class="stat-val" id="val-hygiene">100%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-hygiene"></div></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-info">
+                    <span class="stat-icon">😃</span>
+                    <span class="stat-val" id="val-mood">100%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-mood"></div></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-info">
+                    <span class="stat-icon">📚</span>
+                    <span class="stat-val" id="val-knowledge">100%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bar-knowledge"></div></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Scrollable Body -->
     <div class="main-content">
         
+        <div class="growth-header-text" id="stage-name" data-key="stage_baby">Baby Lion</div>
+
+        <!-- Stage -->
         <div class="stage">
             
-            <!-- Highlighted Widget -->
             <div id="next-reward-widget" class="next-reward-widget" onclick="game.showTimeline()">
-                <div class="nr-img-box"><img id="nr-img" src="" alt="Reward"></div>
+                <div class="nr-img-box">
+                    <img id="nr-img" src="" alt="Reward">
+                </div>
                 <div class="nr-text-group">
                     <span class="nr-label" data-key="goal">GOAL</span>
                     <span id="nr-time" class="nr-time">10m</span>
                 </div>
             </div>
 
-            <!-- Notification Bar -->
-            <div id="notification-bar"></div>
-
-            <!-- Lion -->
-            <img id="pet-image" src="" alt="Lion" draggable="false" />
+            <img id="pet-image" src="" alt="Blue Lion" draggable="false" />
             
-            <!-- Growth Sidebar -->
             <div class="right-panel-container">
                 <div id="growth-component" class="growth-sidebar" onclick="game.showTimeline()">
-                    <div class="growth-icon next"><img id="next-stage-icon" src="" alt="Next"></div>
-                    <div class="v-bar-bg"><div id="growth-fill" class="v-bar-fill"></div></div>
-                    <div class="growth-icon current"><img id="current-stage-icon" src="" alt="Current"></div>
+                    <div class="growth-icon next">
+                        <img id="next-stage-icon" src="" alt="Next">
+                    </div>
+                    <div class="v-bar-bg">
+                        <div id="growth-fill" class="v-bar-fill"></div>
+                    </div>
+                    <div class="growth-icon current">
+                        <img id="current-stage-icon" src="" alt="Current">
+                    </div>
                 </div>
             </div>
+
         </div>
 
-        <!-- Controls Footer -->
+        <!-- Controls -->
         <div class="controls-wrapper">
             <div class="controls">
                 <div id="message-log" data-key="msg_hello">Hello! Take care of me! ❤️</div>
                 <div class="action-grid">
                     <button class="btn" onclick="game.action('feed')">
-                        <i style="font-style:normal">🍖</i> <span class="lbl" data-key="btn_feed">Feed</span> <span class="cost" data-key="cost_20">-20</span>
+                        🍖 <span data-key="btn_feed">Feed</span>
+                        <span data-key="cost_20">-20 Pts</span>
                     </button>
                     <button class="btn" onclick="game.action('bathe')">
-                        <i style="font-style:normal">🛁</i> <span class="lbl" data-key="btn_bath">Bath</span> <span class="cost" data-key="cost_20">-20</span>
+                        🛁 <span data-key="btn_bath">Bath</span>
+                        <span data-key="cost_20">-20 Pts</span>
                     </button>
                     <button class="btn" onclick="game.action('play')">
-                        <i style="font-style:normal">⚽</i> <span class="lbl" data-key="btn_play">Play</span> <span class="cost" data-key="cost_30">-30</span>
+                        ⚽ <span data-key="btn_play">Play</span>
+                        <span data-key="cost_30">-30 Pts</span>
                     </button>
                     <button class="btn" onclick="game.action('study')">
-                        <i style="font-style:normal">📚</i> <span class="lbl" data-key="btn_study">Study</span> <span class="cost" data-key="cost_30">-30</span>
+                        📚 <span data-key="btn_study">Study</span>
+                        <span data-key="cost_30">-30 Pts</span>
                     </button>
                 </div>
                 <button class="btn btn-lottery" id="btn-lottery" onclick="game.playLottery()">
@@ -441,34 +650,39 @@
     </div>
 
     <!-- Modals -->
+    
     <div id="rules-modal" class="modal-overlay" onclick="game.closeModal('rules-modal')">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="game.closeModal('rules-modal')">&times;</span>
-            <div class="modal-title" data-key="rules_title">📜 How to Play</div>
+            <div class="modal-title" data-key="rules_title">📜 Game Rules</div>
+            
             <div class="rules-section">
-                <div class="rules-title"><span class="rules-icon">🦁</span> <span data-key="rule_1_title">Grow your Lion</span></div>
-                <div data-key="rule_1_desc">Keep your lion happy! Time spent in the game makes him grow into new forms.</div>
+                <div class="rules-header" data-key="rules_sec1_t">🦁 What is this?</div>
+                <div class="rules-text" data-key="rules_sec1_d">Adopt your own digital lion! He grows as you spend time with him.</div>
             </div>
+            
             <div class="rules-section">
-                <div class="rules-title"><span class="rules-icon">🏆</span> <span data-key="rule_2_title">Collect Rewards</span></div>
-                <div data-key="rule_2_desc">Unlock exclusive Frames, Cars, and Medals as your lion grows older.</div>
+                <div class="rules-header" data-key="rules_sec2_t">🎁 Rewards</div>
+                <div class="rules-text" data-key="rules_sec2_d">Stay online to unlock rare frames, cars, and medals. The longer you accompany him, the better the rewards!</div>
             </div>
+
             <div class="rules-section">
-                <div class="rules-title"><span class="rules-icon">❤️</span> <span data-key="rule_3_title">Maintain Stats</span></div>
-                <div data-key="rule_3_desc">Don't let Hunger, Hygiene, or Mood drop to 0, or growth stops! Use Points (🌹) to care for him.</div>
-            </div>
-            <div class="rules-section">
-                <div class="rules-title"><span class="rules-icon">🎁</span> <span data-key="rule_4_title">Lucky Draw</span></div>
-                <div data-key="rule_4_desc">Spin the wheel every 5 minutes to win Points or Time Speedups!</div>
+                <div class="rules-header" data-key="rules_sec3_t">🎮 How to play?</div>
+                <div class="rules-text" data-key="rules_sec3_d">
+                    1. Keep stats (Hunger, etc.) above 30%.<br>
+                    2. If he is sad, growth stops!<br>
+                    3. Use points to feed & play.<br>
+                    4. Try the Lucky Draw for boosts!
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Other Modals -->
     <div id="timeline-modal" class="modal-overlay" onclick="game.closeModal('timeline-modal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-content wide" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="game.closeModal('timeline-modal')">&times;</span>
             <div class="modal-title" data-key="timeline_title">🚀 Growth Journey</div>
+            <div style="font-size:0.8rem; color:#888; margin-bottom:10px;" data-key="timeline_desc">Swipe to see rewards</div>
             <div class="timeline-container" id="timeline-container"></div>
         </div>
     </div>
@@ -477,7 +691,9 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="game.closeModal('history-modal')">&times;</span>
             <div class="modal-title" data-key="modal_history">🌹 History</div>
-            <div class="history-list" id="history-list"></div>
+            <div class="history-list" id="history-list">
+                <div style="text-align:center; padding:20px; color:#999;" data-key="no_history">No records</div>
+            </div>
         </div>
     </div>
 
@@ -489,12 +705,16 @@
         </div>
     </div>
 
+    <!-- UPDATED LOTTERY RESULT MODAL -->
     <div id="lottery-result-modal" class="modal-overlay">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="game.closeModal('lottery-result-modal')">&times;</span>
-            <div style="font-size:3rem; margin-bottom:10px;">🎉</div>
             <div class="modal-title" data-key="congrats">Congratulations!</div>
-            <div class="modal-desc" id="lottery-win-text">You won!</div>
+            
+            <div id="lottery-result-content" style="margin: 20px 0;">
+                <!-- Content injected via JS -->
+            </div>
+
             <button class="btn-lottery" onclick="game.closeModal('lottery-result-modal')" data-key="awesome">Awesome!</button>
         </div>
     </div>
@@ -502,289 +722,625 @@
 <script>
 const TRANSLATIONS = {
     en: {
-        currency: "Pts", warning_sad: "⚠️ Sad lion! Growth stopped.",
-        stat_hunger: "Hunger", stat_clean: "Clean", stat_mood: "Mood", stat_know: "Study",
-        stage_baby: "Baby", stage_kid: "Kid", stage_trendy: "Trendy", stage_gentle: "Gentleman",
+        currency: "Pts",
+        warning_sad: "⚠️ Your lion is sad! Growth stopped.",
+        stage_baby: "Baby Lion", stage_kid: "Kid Lion", stage_trendy: "Trendy Lion", stage_gentle: "Gentleman",
+        next_evo: "Next evolution: ", max_level: "Max Level 👑",
+        collection_title: "🏆 Collection",
         msg_hello: "Hello! Take care of me! ❤️",
         btn_feed: "Feed", btn_bath: "Bath", btn_play: "Play", btn_study: "Study",
-        cost_20: "-20", cost_30: "-30", btn_lottery: "Lucky Draw", btn_sad: "Too Sad",
+        cost_10: "-10 Pts", cost_15: "-15 Pts", cost_20: "-20 Pts", cost_30: "-30 Pts",
+        btn_lottery: "Lucky Draw", btn_wait: "Wait", btn_sad: "Too Sad",
         modal_history: "🌹 History", no_history: "No records",
         modal_lottery: "🎁 Lucky Draw", spinning: "Spinning...",
         congrats: "Congratulations!", awesome: "Awesome!",
-        won_text: "You won {val} Points!", won_time: "Won {val}m Speedup!",
-        unlocked: "Unlocked!",
-        bonus_msg: "✨ Surprise! +{sec}s!",
+        
+        // UPDATED KEYS
+        reward_points_title: "Points Added", 
+        reward_time_title: "Growth Speedup",
+        unlocked: "Unlocked",
+        locked: "Locked",
+        timeline_req: "Goal: {val}", // For displaying requirement in timeline
+
+        bonus_msg: "✨ Surprise! Growth +{sec}s!",
         not_enough: "Not enough points!",
-        lottery_history: "Lottery", day: "d", hour: "h", min: "m",
+        lottery_history: "Lottery",
+        day: "d", hour: "h", min: "m",
         next_stage_hint: "Next stage in {val} mins!", 
-        goal: "GOAL", timeline_title: "Journey",
-        rules_title: "📜 How to Play",
-        rule_1_title: "Grow your Lion", rule_1_desc: "Time spent online makes him grow into new cool forms!",
-        rule_2_title: "Collect Rewards", rule_2_desc: "Unlock exclusive Frames, Cars, and Medals automatically.",
-        rule_3_title: "Maintain Stats", rule_3_desc: "Keep stats above 30% using Points (🌹).",
-        rule_4_title: "Lucky Draw", rule_4_desc: "Spin every 5 mins for free points or time speedups.",
         item_moon: "Moon Frame", item_star: "Star Frame", item_gold: "Golden Frame",
         item_red_car: "Red Car", item_blue_car: "Blue Car", item_super_car: "Super Car",
-        item_medal: "Legend Medal"
+        item_medal: "Legend Medal",
+        next_reward: "Next:",
+        timeline_title: "🚀 Growth Journey",
+        timeline_desc: "Swipe to see all rewards",
+        type_stage: "Evolution",
+        type_item: "Reward",
+        goal: "GOAL",
+        btn_rules: "Rules",
+        rules_title: "📜 Game Rules",
+        rules_sec1_t: "🦁 What is this?",
+        rules_sec1_d: "Adopt your own digital lion! He grows as you spend time with him.",
+        rules_sec2_t: "🎁 Rewards",
+        rules_sec2_d: "Stay online to unlock rare frames, cars, and medals.",
+        rules_sec3_t: "🎮 How to play?",
+        rules_sec3_d: "1. Keep stats above 30%.<br>2. Sad lion stops growing!<br>3. Lucky draw for boosts."
     },
     zh: {
-        currency: "积分", warning_sad: "⚠️ 狮子不开心！成长停止。",
-        stat_hunger: "饱腹", stat_clean: "清洁", stat_mood: "心情", stat_know: "知识",
-        stage_baby: "婴儿", stage_kid: "幼年", stage_trendy: "潮男", stage_gentle: "绅士",
+        currency: "积分",
+        warning_sad: "⚠️ 小狮子不开心了！成长停止。",
+        stage_baby: "婴儿小狮子", stage_kid: "幼年小狮子", stage_trendy: "潮男狮子", stage_gentle: "绅士狮子",
+        next_evo: "距离进化: ", max_level: "已达最高等级! 👑",
+        collection_title: "🏆 收藏馆",
         msg_hello: "你好！请好好照顾我 ❤️",
         btn_feed: "喂食", btn_bath: "洗澡", btn_play: "玩耍", btn_study: "学习",
-        cost_20: "-20", cost_30: "-30", btn_lottery: "幸运抽奖", btn_sad: "心情不好",
-        modal_history: "🌹 记录", no_history: "暂无记录",
-        modal_lottery: "🎁 抽奖", spinning: "抽奖中...",
+        cost_10: "-10 积分", cost_15: "-15 积分", cost_20: "-20 积分", cost_30: "-30 积分",
+        btn_lottery: "幸运抽奖", btn_wait: "等待", btn_sad: "心情不好",
+        modal_history: "🌹 积分记录", no_history: "暂无记录",
+        modal_lottery: "🎁 幸运抽奖", spinning: "抽奖中...",
         congrats: "恭喜中奖!", awesome: "太棒了!",
-        won_text: "获得 {val} 积分!", won_time: "获得 {val}分 加速!",
-        unlocked: "已解锁!",
-        bonus_msg: "✨ 惊喜! +{sec}秒!",
+        
+        // UPDATED KEYS
+        reward_points_title: "获得积分",
+        reward_time_title: "成长加速",
+        unlocked: "已解锁",
+        locked: "未解锁",
+        timeline_req: "目标: {val}",
+
+        bonus_msg: "✨ 惊喜! 成长加速 +{sec}秒!",
         not_enough: "积分不足!",
-        lottery_history: "抽奖", day: "天", hour: "时", min: "分",
-        next_stage_hint: "下一阶段: {val}分",
-        goal: "目标", timeline_title: "成长日记",
-        rules_title: "📜 游戏规则",
-        rule_1_title: "养育小狮子", rule_1_desc: "保持在线时长，让小狮子进化成更酷的形态！",
-        rule_2_title: "收集奖励", rule_2_desc: "随着成长，自动解锁专属相框、跑车和勋章。",
-        rule_3_title: "保持状态", rule_3_desc: "使用积分(🌹)照顾狮子，状态过低会停止生长。",
-        rule_4_title: "幸运抽奖", rule_4_desc: "每5分钟免费抽奖，赢取积分或时间加速道具。",
+        lottery_history: "幸运抽奖",
+        day: "天", hour: "小时", min: "分",
+        next_stage_hint: "距离下一阶段还有 {val} 分钟!",
         item_moon: "月亮相框", item_star: "星星相框", item_gold: "黄金相框",
         item_red_car: "红色跑车", item_blue_car: "蓝色跑车", item_super_car: "超级赛车",
-        item_medal: "传奇勋章"
+        item_medal: "传奇勋章",
+        next_reward: "下一个:",
+        timeline_title: "🚀 成长日记",
+        timeline_desc: "左右滑动查看所有奖励",
+        type_stage: "进化",
+        type_item: "收藏品",
+        goal: "下一个",
+        btn_rules: "规则",
+        rules_title: "📜 游戏规则",
+        rules_sec1_t: "🦁 这是什么?",
+        rules_sec1_d: "领养你的数字小狮子！随着陪伴时间的增加，它会长大。",
+        rules_sec2_t: "🎁 核心奖励",
+        rules_sec2_d: "保持在线以解锁稀有相框、豪车和勋章。陪伴越久，奖励越好！",
+        rules_sec3_t: "🎮 怎么玩?",
+        rules_sec3_d: "1. 保持状态在30%以上。<br>2. 狮子难过时停止生长！<br>3. 试试抽奖加速成长。"
     },
-    ar: { 
-        currency: "ن", warning_sad: "⚠️ حزين!", stat_hunger: "جوع", stat_clean: "نظافة", stat_mood: "مزاج", stat_know: "عالم",
-        goal: "هدف", rules_title: "📜 القواعد", rule_1_title: "نمو الأسد", rule_1_desc: "الوقت يجعله ينمو!",
-        rule_2_title: "الجوائز", rule_2_desc: "افتح إطارات وسيارات.", rule_3_title: "العناية", rule_3_desc: "حافظ على صحته.",
-        rule_4_title: "الحظ", rule_4_desc: "عجلة الحظ كل 5 دقائق.",
-        btn_feed: "إطعام", btn_bath: "استحمام", btn_play: "لعب", btn_study: "دراسة", btn_lottery: "سحب",
-        day: "ي", hour: "س", min: "د", unlocked: "مفتوح", bonus_msg: "✨ مفاجأة! نمو +{sec}ث!",
+    ar: {
+        currency: "ن",
+        warning_sad: "⚠️ أسدك حزين! توقف النمو.",
+        stage_baby: "شبل صغير", stage_kid: "شبل يافع", stage_trendy: "أسد عصري", stage_gentle: "أسد نبيل",
+        next_evo: "التطور القادم: ", max_level: "وصل لأعلى مستوى! 👑",
+        collection_title: "🏆 المجموعة",
+        msg_hello: "مرحباً! اعتنِ بي ❤️",
+        btn_feed: "إطعام", btn_bath: "استحمام", btn_play: "لعب", btn_study: "دراسة",
+        cost_10: "-10 ن", cost_15: "-15 ن", cost_20: "-20 ن", cost_30: "-30 ن",
+        btn_lottery: "سحب الحظ", btn_wait: "انتظر", btn_sad: "حزين جداً",
+        modal_history: "🌹 السجل", no_history: "لا توجد سجلات",
+        modal_lottery: "🎁 سحب الحظ", spinning: "جاري السحب...",
+        congrats: "تهانينا!", awesome: "رائع!",
+        
+        reward_points_title: "نقاط مضافة",
+        reward_time_title: "تسريع النمو",
+        unlocked: "مفتوح",
+        locked: "مغلق",
+        timeline_req: "هدف: {val}",
+
+        bonus_msg: "✨ مفاجأة! نمو +{sec}ث!",
+        not_enough: "نقاط غير كافية!",
+        lottery_history: "سحب الحظ",
+        day: "ي", hour: "س", min: "d",
+        next_stage_hint: "المرحلة القادمة في {val} دقيقة!",
         item_moon: "إطار القمر", item_star: "إطار النجمة", item_gold: "الإطار الذهبي",
         item_red_car: "سيارة حمراء", item_blue_car: "سيارة زرقاء", item_super_car: "سيارة خارقة",
-        item_medal: "ميدالية أسطورية"
+        item_medal: "ميدالية أسطورية",
+        next_reward: "التالي:",
+        timeline_title: "🚀 رحلة النمو",
+        timeline_desc: "اسحب لرؤية المكافآت",
+        type_stage: "تطور",
+        type_item: "مكافأة",
+        goal: "هدف",
+        btn_rules: "قواعد",
+        rules_title: "📜 قواعد اللعبة",
+        rules_sec1_t: "🦁 ما هذا؟",
+        rules_sec1_d: "تبني أسدك الرقمي! ينمو كلما قضيت وقتاً معه.",
+        rules_sec2_t: "🎁 المكافآت",
+        rules_sec2_d: "ابق متصلاً لفتح إطارات وسيارات نادرة.",
+        rules_sec3_t: "🎮 كيف تلعب؟",
+        rules_sec3_d: "1. حافظ على صحته فوق 30٪.<br>2. الحزن يوقف النمو!<br>3. جرب سحب الحظ."
     },
-    id: { 
-        currency: "Poin", warning_sad: "⚠️ Sedih!", stat_hunger: "Lapar", stat_clean: "Bersih", stat_mood: "Mood", stat_know: "Pintar",
-        goal: "TUJUAN", rules_title: "📜 Aturan", rule_1_title: "Tumbuh", rule_1_desc: "Waktu online = Tumbuh.",
-        rule_2_title: "Hadiah", rule_2_desc: "Buka bingkai & mobil.", rule_3_title: "Rawat", rule_3_desc: "Jaga status > 30%.",
-        rule_4_title: "Undian", rule_4_desc: "Putar tiap 5 menit.",
-        btn_feed: "Makan", btn_bath: "Mandi", btn_play: "Main", btn_study: "Belajar", btn_lottery: "Undian",
-        day: "h", hour: "j", min: "m", unlocked: "Terbuka", bonus_msg: "✨ Kejutan! Tumbuh +{sec}dtk!",
+    id: {
+        currency: "Poin",
+        warning_sad: "⚠️ Singa sedih! Pertumbuhan berhenti.",
+        stage_baby: "Bayi Singa", stage_kid: "Singa Kecil", stage_trendy: "Singa Gaul", stage_gentle: "Singa Tuan",
+        next_evo: "Evolusi dlm: ", max_level: "Level Maks! 👑",
+        collection_title: "🏆 Koleksi",
+        msg_hello: "Halo! Rawat aku ya ❤️",
+        btn_feed: "Makan", btn_bath: "Mandi", btn_play: "Main", btn_study: "Belajar",
+        cost_10: "-10 P", cost_15: "-15 P", cost_20: "-20 P", cost_30: "-30 P",
+        btn_lottery: "Undian", btn_wait: "Tunggu", btn_sad: "Sedih",
+        modal_history: "🌹 Riwayat", no_history: "Tidak ada data",
+        modal_lottery: "🎁 Undian", spinning: "Memutar...",
+        congrats: "Selamat!", awesome: "Mantap!",
+        
+        reward_points_title: "Poin Ditambah",
+        reward_time_title: "Percepat Tumbuh",
+        unlocked: "Terbuka",
+        locked: "Terkunci",
+        timeline_req: "Target: {val}",
+
+        bonus_msg: "✨ Kejutan! Tumbuh +{sec}dtk!",
+        not_enough: "Poin kurang!",
+        lottery_history: "Undian",
+        day: "h", hour: "j", min: "m",
+        next_stage_hint: "Tahap selanjutnya dalam {val} menit!",
         item_moon: "Bingkai Bulan", item_star: "Bingkai Bintang", item_gold: "Bingkai Emas",
         item_red_car: "Mobil Merah", item_blue_car: "Mobil Biru", item_super_car: "Mobil Super",
-        item_medal: "Medali Legenda"
+        item_medal: "Medali Legenda",
+        next_reward: "Berikutnya:",
+        timeline_title: "🚀 Perjalanan",
+        timeline_desc: "Geser untuk lihat hadiah",
+        type_stage: "Evolusi",
+        type_item: "Hadiah",
+        goal: "TUJUAN",
+        btn_rules: "Aturan",
+        rules_title: "📜 Aturan Main",
+        rules_sec1_t: "🦁 Apa ini?",
+        rules_sec1_d: "Adopsi singa digitalmu! Dia tumbuh seiring waktumu.",
+        rules_sec2_t: "🎁 Hadiah",
+        rules_sec2_d: "Tetap online untuk buka bingkai & mobil langka.",
+        rules_sec3_t: "🎮 Cara main?",
+        rules_sec3_d: "1. Jaga status di atas 30%.<br>2. Singa sedih stop tumbuh!<br>3. Coba Undian."
     },
-    tr: { 
-        currency: "P", warning_sad: "⚠️ Üzgün!", stat_hunger: "Açlık", stat_clean: "Temiz", stat_mood: "Mod", stat_know: "Bilgi",
-        goal: "HEDEF", rules_title: "📜 Kurallar", rule_1_title: "Büyüt", rule_1_desc: "Zamanla büyür.",
-        rule_2_title: "Ödüller", rule_2_desc: "Çerçeve ve Araba kazan.", rule_3_title: "Bakım", rule_3_desc: "İstatistikleri koru.",
-        rule_4_title: "Çekiliş", rule_4_desc: "5 dakikada bir şans.",
-        btn_feed: "Ye", btn_bath: "Yıka", btn_play: "Oyna", btn_study: "Oku", btn_lottery: "Çekiliş",
-        day: "g", hour: "s", min: "d", unlocked: "Açık", bonus_msg: "✨ Sürpriz! Büyüme +{sec}sn!",
+    tr: {
+        currency: "Puan",
+        warning_sad: "⚠️ Aslan üzgün! Büyüme durdu.",
+        stage_baby: "Bebek Aslan", stage_kid: "Çocuk Aslan", stage_trendy: "Havalı Aslan", stage_gentle: "Beyefendi",
+        next_evo: "Sonraki evrim: ", max_level: "Son Seviye! 👑",
+        collection_title: "🏆 Koleksiyon",
+        msg_hello: "Merhaba! Bana iyi bak ❤️",
+        btn_feed: "Besle", btn_bath: "Yıka", btn_play: "Oyna", btn_study: "Oku",
+        cost_10: "-10 P", cost_15: "-15 P", cost_20: "-20 P", cost_30: "-30 P",
+        btn_lottery: "Şanslı Çekiliş", btn_wait: "Bekle", btn_sad: "Üzgün",
+        modal_history: "🌹 Geçmiş", no_history: "Kayıt yok",
+        modal_lottery: "🎁 Çekiliş", spinning: "Dönüyor...",
+        congrats: "Tebrikler!", awesome: "Harika!",
+        
+        reward_points_title: "Puan Eklendi",
+        reward_time_title: "Büyüme Hızı",
+        unlocked: "Açık",
+        locked: "Kilitli",
+        timeline_req: "Hedef: {val}",
+
+        bonus_msg: "✨ Sürpriz! Büyüme +{sec}sn!",
+        not_enough: "Puan yetersiz!",
+        lottery_history: "Çekiliş",
+        day: "g", hour: "s", min: "d",
+        next_stage_hint: "Sonraki aşama {val} dakika içinde!",
         item_moon: "Ay Çerçevesi", item_star: "Yıldız Çerçevesi", item_gold: "Altın Çerçeve",
         item_red_car: "Kırmızı Araba", item_blue_car: "Mavi Araba", item_super_car: "Süper Araba",
-        item_medal: "Efsane Madalyası"
+        item_medal: "Efsane Madalyası",
+        next_reward: "Sıradaki:",
+        timeline_title: "🚀 Büyüme Yolculuğu",
+        timeline_desc: "Ödülleri görmek için kaydır",
+        type_stage: "Evrim",
+        type_item: "Ödül",
+        goal: "HEDEF",
+        btn_rules: "Kurallar",
+        rules_title: "📜 Oyun Kuralları",
+        rules_sec1_t: "🦁 Bu nedir?",
+        rules_sec1_d: "Kendi dijital aslanını sahiplen! Zamanla büyür.",
+        rules_sec2_t: "🎁 Ödüller",
+        rules_sec2_d: "Nadir çerçeveler ve arabalar açmak için çevrimiçi kal.",
+        rules_sec3_t: "🎮 Nasıl oynanır?",
+        rules_sec3_d: "1. Durumu %30 üstü tut.<br>2. Üzgün aslan büyümez!<br>3. Şanslı çekilişi dene."
     }
 };
 
 const LION_STAGES = [
-    { minMinutes: 0, name_key: "stage_baby", assets: { idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_605328cb-0397-4ae6-9d8c-81d9faa9c2cg.png", sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_81ba85d0-eb40-48f6-a519-1eb7e1637ecg.png" } },
-    { minMinutes: 60, name_key: "stage_kid", assets: { idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_0932da40-1ec4-4b08-bcaf-50059a9c590g.png", sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_9b704086-4791-4fff-95be-6c2c971fbabg.png" } },
-    { minMinutes: 1440, name_key: "stage_trendy", assets: { idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_68b43430-306d-4e8f-adbc-93c98b199a1g.png", sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_2dbf8cf4-be10-46df-98d7-35fb362b236g.png" } },
-    { minMinutes: 4320, name_key: "stage_gentle", assets: { idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_599dfcf7-4217-4ade-aede-04b3bd4674dg.png", sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_aafb8e0a-afcc-4a63-86eb-840087a9cafg.png" } }
+    {
+        name_key: "stage_baby",
+        minMinutes: 0,
+        assets: {
+            idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_605328cb-0397-4ae6-9d8c-81d9faa9c2cg.png",
+            touch: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_2fa9c653-032e-4056-9edb-ba6c36f99f3g.png",
+            washing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_e9e32b80-ddff-4f33-a9c8-4ae2c9fe850g.png",
+            eating: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_bd8f1198-bdb3-4e81-bd04-119e1d1e975g.png",
+            playing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_557d9908-7f09-46fd-8336-e4bc877f7bcg.png",
+            studying: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_f63f3e59-0317-4278-a222-b51e5b479bfg.png",
+            sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_81ba85d0-eb40-48f6-a519-1eb7e1637ecg.png"
+        }
+    },
+    {
+        name_key: "stage_kid",
+        minMinutes: 60,
+        assets: {
+            idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_0932da40-1ec4-4b08-bcaf-50059a9c590g.png",
+            touch: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_8714e8cd-a493-4910-a879-a711ce2fcffg.png",
+            washing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_d1f68a54-329c-4c1c-bcfb-13a1155426fg.png",
+            eating: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_9543bbce-ed49-4777-9fb2-4d91534f24ag.png",
+            playing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_f26f3834-3bd3-4185-bf9f-a367151d6edg.png",
+            studying: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_e7dbbdda-9662-417c-8a99-1e61a5e6ff7g.png",
+            sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_9b704086-4791-4fff-95be-6c2c971fbabg.png"
+        }
+    },
+    {
+        name_key: "stage_trendy",
+        minMinutes: 1440, 
+        assets: {
+            idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_68b43430-306d-4e8f-adbc-93c98b199a1g.png",
+            touch: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_75a5ae6c-1eeb-48e4-817d-0b2a0658c98g.png",
+            washing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_2056aad6-ede4-40c7-a91f-c9b9f832a47g.png",
+            eating: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_9a9a2874-cbc6-479c-afe1-ea79383dca1g.png",
+            playing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_aeb11626-8618-4940-9dca-dc241bd9024g.png",
+            studying: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_f647077c-7d4a-4677-8aaf-4412a7b52c6g.png",
+            sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_2dbf8cf4-be10-46df-98d7-35fb362b236g.png"
+        }
+    },
+    {
+        name_key: "stage_gentle",
+        minMinutes: 4320, 
+        assets: {
+            idle: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_599dfcf7-4217-4ade-aede-04b3bd4674dg.png",
+            touch: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_469cadec-c139-4113-af5c-741f1c9d19dg.png",
+            washing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_c78dcade-5608-456f-8fa6-0cd6e5c877fg.png",
+            eating: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_2ca0260d-6b12-4241-ab86-d9ebe7494f6g.png",
+            playing: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_9b375413-d95b-40a9-bbd6-78553dd4154g.png",
+            studying: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_8a7ac43d-ccca-46ac-8ff0-2b3f4b8897dg.png",
+            sad: "https://cos-cdn.kk6277.com/feishu/img_v3_02tt_aafb8e0a-afcc-4a63-86eb-840087a9cafg.png"
+        }
+    }
 ];
 
 const ACHIEVEMENTS = [
-    { id: 'frame_a', timeMin: 1, name_key: "item_moon", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_a855cdd3-3897-475f-b5d5-707171d8843g.png" },
-    { id: 'frame_b', timeMin: 30, name_key: "item_star", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_05ff92d2-cec1-48e5-9ce2-89af79bafadg.png" },
-    { id: 'frame_c', timeMin: 60, name_key: "item_gold", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_a938c968-4f9d-44c8-8ecd-f668cbf292ag.png" },
-    { id: 'car_d', timeMin: 180, name_key: "item_red_car", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_052e03b4-d355-4bc1-8905-f4635eeecbdg.png" },
-    { id: 'car_e', timeMin: 360, name_key: "item_blue_car", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_3765483f-518b-4905-a1f8-0983d97ce48g.png" },
-    { id: 'car_f', timeMin: 1440, name_key: "item_super_car", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_ab4cafbd-eded-4ba3-a96b-b5f3757869ag.png" }, 
-    { id: 'medal_g', timeMin: 2880, name_key: "item_medal", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_c98e167c-e338-4c70-8fe6-1c94620cab7g.png" } 
+    { id: 'frame_a', timeMin: 1,      name_key: "item_moon",    img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_a855cdd3-3897-475f-b5d5-707171d8843g.png" },
+    { id: 'frame_b', timeMin: 30,     name_key: "item_star",    img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_05ff92d2-cec1-48e5-9ce2-89af79bafadg.png" },
+    { id: 'frame_c', timeMin: 60,     name_key: "item_gold",    img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_a938c968-4f9d-44c8-8ecd-f668cbf292ag.png" },
+    { id: 'car_d',   timeMin: 180,    name_key: "item_red_car", img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_052e03b4-d355-4bc1-8905-f4635eeecbdg.png" },
+    { id: 'car_e',   timeMin: 360,    name_key: "item_blue_car",img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_3765483f-518b-4905-a1f8-0983d97ce48g.png" },
+    { id: 'car_f',   timeMin: 1440,   name_key: "item_super_car",img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_ab4cafbd-eded-4ba3-a96b-b5f3757869ag.png" }, 
+    { id: 'medal_g', timeMin: 2880,   name_key: "item_medal",   img: "https://cos-cdn.kk6277.com/feishu/img_v3_02tc_c98e167c-e338-4c70-8fe6-1c94620cab7g.png" } 
 ];
 
-const CONSTANTS = { DECAY_MS: 10000, INCOME_MS: 60000, LOTTERY_CD: 5*60000 };
-const LOTTERY_ITEMS = [ {t:'t',v:30,s:"30m"},{t:'t',v:15,s:"15m"},{t:'t',v:10,s:"10m"},{t:'t',v:5,s:"5m"},{t:'i',v:0,s:"🦁"},{t:'p',v:600,s:"600"},{t:'p',v:300,s:"300"},{t:'p',v:100,s:"100"},{t:'p',v:100,s:"100"}];
-const LOTTERY_SEQ = [0,1,2,5,8,7,6,3];
+const CONSTANTS = {
+    DECAY_RATE_MS: 10000, 
+    PASSIVE_INCOME_MS: 60000, 
+    LOTTERY_COOLDOWN: 5 * 60 * 1000, 
+    ACTIONS: {
+        feed: { cost: 20, stat: 'hunger', amount: 10, anim: 'eating', duration: 2000 },
+        bathe: { cost: 20, stat: 'hygiene', amount: 10, anim: 'washing', duration: 2500 },
+        play: { cost: 30, stat: 'mood', amount: 10, anim: 'playing', duration: 2000 },
+        study: { cost: 30, stat: 'knowledge', amount: 10, anim: 'studying', duration: 3000 }
+    }
+};
+
+const LOTTERY_ITEMS = [
+    { type: 'time', val: 30, text: "30min" }, 
+    { type: 'time', val: 15, text: "15min" }, 
+    { type: 'time', val: 10, text: "10min" }, 
+    { type: 'time', val: 5, text: "5min" }, 
+    { type: 'icon', val: 0, text: "🦁" }, 
+    { type: 'point', val: 600, text: "600 🌹" }, 
+    { type: 'point', val: 300, text: "300 🌹" }, 
+    { type: 'point', val: 100, text: "100 🌹" }, 
+    { type: 'point', val: 100, text: "100 🌹" }
+];
+const LOTTERY_SEQUENCE = [0, 1, 2, 5, 8, 7, 6, 3]; 
 
 class Game {
     constructor() {
-        this.state = { stats: { hunger:80, hygiene:80, mood:80, knowledge:80 }, points:100, lastLottery:0, totalTimeSec:0, unlockedItems:[], history:[], lang:'en' };
+        this.state = {
+            stats: { hunger: 80, hygiene: 80, mood: 80, knowledge: 80 },
+            points: 100,
+            lastLottery: 0,
+            totalTimeSec: 0, 
+            unlockedItems: [],
+            history: [],
+            lang: 'en'
+        };
+        this.animTimer = null;
         this.isSad = false;
-        this.currentStage = 0;
-        this.trans = TRANSLATIONS.en;
-        this.timers = {}; // Store timers to clear them
+        this.currentStage = 0; 
+        this.notificationTimer = null;
+        this.translations = TRANSLATIONS.en;
     }
 
     init() {
-        this.clearTimers(); // Fix: Prevent infinite loop stacking
-        this.load();
+        this.loadData();
         this.setLanguage(this.state.lang);
-        this.updateGrowth();
-        this.updateWidget();
+        this.updateGrowthStage(); 
+        this.updateNextRewardWidget(); 
+        this.preloadImages();
         this.setupTimers();
         this.render();
-        this.setPet('idle');
+        this.setPetState('idle');
+        this.checkBackground();
     }
 
-    clearTimers() {
-        if(this.timers.heartbeat) clearInterval(this.timers.heartbeat);
-        if(this.timers.decay) clearInterval(this.timers.decay);
-        if(this.timers.income) clearInterval(this.timers.income);
-        if(this.timers.lottery) clearInterval(this.timers.lottery);
-    }
+    setLanguage(lang) {
+        this.state.lang = lang;
+        this.translations = TRANSLATIONS[lang] || TRANSLATIONS.en;
+        
+        if (lang === 'ar') {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.lang = 'ar';
+        } else {
+            document.documentElement.setAttribute('dir', 'ltr');
+            document.documentElement.lang = lang;
+        }
 
-    setLanguage(l) {
-        this.state.lang = l;
-        this.trans = TRANSLATIONS[l] || TRANSLATIONS.en;
-        document.documentElement.dir = (l === 'ar') ? 'rtl' : 'ltr';
-        document.getElementById('lang-select').value = l;
+        document.getElementById('lang-select').value = lang;
         this.updateText();
+        this.saveData();
     }
 
     updateText() {
+        const t = this.translations;
         document.querySelectorAll('[data-key]').forEach(el => {
-            const k = el.getAttribute('data-key');
-            if (this.trans[k]) el.innerText = this.trans[k];
+            const key = el.getAttribute('data-key');
+            if (t[key]) el.innerHTML = t[key];
+            else if (t[key] === "") el.innerHTML = "";
         });
         this.renderGrowth();
-        this.updateLotteryBtn();
-        this.updateWidget();
+        this.updateLotteryButton();
+        this.updateNextRewardWidget(); 
     }
 
-    getText(k) { return this.trans[k] || k; }
+    getText(key) {
+        return this.translations[key] || key;
+    }
 
-    updateGrowth() {
-        const m = this.state.totalTimeSec / 60;
-        let idx = 0;
-        LION_STAGES.forEach((s, i) => { if (m >= s.minMinutes) idx = i; });
-        this.currentStage = idx;
+    updateGrowthStage() {
+        const mins = this.state.totalTimeSec / 60;
+        let stageIndex = 0;
+        for (let i = 0; i < LION_STAGES.length; i++) {
+            if (mins >= LION_STAGES[i].minMinutes) {
+                stageIndex = i;
+            }
+        }
+        if (this.currentStage !== stageIndex) {
+            this.currentStage = stageIndex;
+        }
     }
 
     getAllMilestones() {
         let list = [];
-        LION_STAGES.forEach((s, i) => { if(i>0) list.push({type:'s', time:s.minMinutes, src:s.assets.idle, name:s.name_key}); });
-        ACHIEVEMENTS.forEach(a => list.push({type:'i', id:a.id, time:a.timeMin, src:a.img, name:a.name_key}));
+        LION_STAGES.forEach((s, idx) => {
+            if (idx > 0) {
+                list.push({
+                    type: 'stage',
+                    time: s.minMinutes,
+                    src: s.assets.idle,
+                    name: s.name_key,
+                    displayType: 'type_stage'
+                });
+            }
+        });
+        ACHIEVEMENTS.forEach(a => {
+            list.push({
+                type: 'item',
+                id: a.id,
+                time: a.timeMin,
+                src: a.img,
+                name: a.name_key,
+                displayType: 'type_item'
+            });
+        });
         return list.sort((a,b) => a.time - b.time);
     }
 
-    updateWidget() {
-        const m = this.state.totalTimeSec / 60;
-        const next = this.getAllMilestones().find(x => x.time > m);
-        const img = document.getElementById('nr-img');
-        const txt = document.getElementById('nr-time');
-        
+    updateNextRewardWidget() {
+        const currentMins = this.state.totalTimeSec / 60;
+        const all = this.getAllMilestones();
+        const next = all.find(m => m.time > currentMins);
+
+        const wImg = document.getElementById('nr-img');
+        const wTime = document.getElementById('nr-time');
+
         if (next) {
-            img.src = next.src;
-            txt.innerText = this.formatTime(next.time - m, true);
+            wImg.src = next.src;
+            const left = Math.ceil(next.time - currentMins);
+            wTime.innerText = this.formatTimeReq(left, true); 
         } else {
-            img.src = LION_STAGES[LION_STAGES.length-1].assets.idle;
-            txt.innerText = "MAX";
+            wImg.src = LION_STAGES[LION_STAGES.length-1].assets.idle;
+            wTime.innerText = "MAX";
         }
     }
 
+    // UPDATED: Show timeline with requirements clearly
     showTimeline() {
-        const c = document.getElementById('timeline-container');
-        c.innerHTML = '';
-        const m = this.state.totalTimeSec / 60;
-        const all = this.getAllMilestones();
-        let scrollEl = null;
+        const modal = document.getElementById('timeline-modal');
+        const container = document.getElementById('timeline-container');
+        container.innerHTML = '';
 
-        all.forEach(item => {
-            const unlocked = m >= item.time;
-            const d = document.createElement('div');
-            d.className = `t-card ${unlocked?'unlocked':''}`;
-            if (!unlocked && !scrollEl) scrollEl = d;
+        const currentMins = this.state.totalTimeSec / 60;
+        const all = this.getAllMilestones();
+        let scrollTarget = null;
+
+        all.forEach((item, index) => {
+            const isUnlocked = currentMins >= item.time;
+            const card = document.createElement('div');
+            card.className = 't-card';
             
-            d.innerHTML = `<img src="${item.src}" class="t-img"><div class="t-name">${this.getText(item.name)}</div>`;
-            c.appendChild(d);
+            if (isUnlocked) {
+                card.classList.add('unlocked');
+            } else if (!scrollTarget) {
+                card.classList.add('locked-next');
+                scrollTarget = card;
+            }
+
+            const name = this.getText(item.name);
+            const timeText = this.formatTimeReq(item.time);
+            
+            // Format requirement string (e.g. "Goal: 30m")
+            const reqLabel = this.getText('timeline_req').replace('{val}', timeText);
+            const statusLabel = isUnlocked ? this.getText('unlocked') : this.getText('locked');
+
+            card.innerHTML = `
+                <div class="t-badge">✓</div>
+                <div style="width:100%; display:flex; flex-direction:column; align-items:center;">
+                    <div class="t-status-pill">${statusLabel}</div>
+                    <img src="${item.src}" class="t-img" alt="${name}">
+                    <div class="t-name">${name}</div>
+                </div>
+                <div class="t-req-text">${reqLabel}</div>
+            `;
+            container.appendChild(card);
         });
 
-        document.getElementById('timeline-modal').style.display = 'flex';
-        setTimeout(() => {
-            if(scrollEl) c.scrollTo({left: scrollEl.offsetLeft - 50, behavior:'smooth'});
-            else c.scrollTo({left: c.scrollWidth, behavior:'smooth'});
-        }, 100);
+        modal.style.display = 'flex';
+
+        if (scrollTarget) {
+            setTimeout(() => {
+                const offset = scrollTarget.offsetLeft - container.offsetWidth/2 + scrollTarget.offsetWidth/2;
+                container.scrollTo({ left: offset, behavior: 'smooth' });
+            }, 100);
+        } else {
+            setTimeout(() => container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' }), 100);
+        }
+    }
+    
+    showRules() {
+        document.getElementById('rules-modal').style.display = 'flex';
     }
 
-    showRules() { document.getElementById('rules-modal').style.display = 'flex'; }
-    closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    showNotify(msg) {
-        const b = document.getElementById('notification-bar');
-        b.innerText = msg;
-        b.classList.add('show');
-        setTimeout(() => b.classList.remove('show'), 4000);
+    getCurrentAssets() {
+        return LION_STAGES[this.currentStage].assets;
     }
 
-    formatTime(m, short) {
-        if(m>=1440) return (m/1440).toFixed(1)+this.getText('day');
-        if(m>=60) return (m/60).toFixed(0)+"h";
-        return Math.ceil(m)+this.getText('min');
+    preloadImages() {
+        LION_STAGES.forEach(stage => {
+            Object.values(stage.assets).forEach(src => {
+                const img = new Image(); img.src = src;
+            });
+        });
+        ACHIEVEMENTS.forEach(item => { const img = new Image(); img.src = item.img; });
+    }
+
+    closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    showNotification(message) {
+        const bar = document.getElementById('notification-bar');
+        if (this.notificationTimer) clearTimeout(this.notificationTimer);
+        bar.innerText = message;
+        bar.classList.add('show');
+        this.notificationTimer = setTimeout(() => {
+            bar.classList.remove('show');
+        }, 5000);
+    }
+
+    formatTimeReq(min, short = false) {
+        if (short) {
+            if(min >= 1440) return (min/1440).toFixed(1) + this.getText('day');
+            if(min >= 60) return (min/60).toFixed(0) + "h " + (min%60) + "m";
+            return min + "m";
+        }
+        if(min >= 1440) return (min/1440).toFixed(1) + this.getText('day');
+        if(min >= 60) return (min/60).toFixed(1) + this.getText('hour');
+        return min + this.getText('min');
     }
 
     showHistory() {
-        const l = document.getElementById('history-list');
-        l.innerHTML = '';
-        if(!this.state.history.length) l.innerHTML = `<div style="text-align:center;padding:20px;color:#999">${this.getText('no_history')}</div>`;
-        else {
-            [...this.state.history].reverse().forEach(h => {
-                const d = document.createElement('div');
-                d.className = 'history-item';
-                d.innerHTML = `<div>${h.desc}</div><span class="plus">+${h.amt}</span>`;
-                l.appendChild(d);
+        const list = document.getElementById('history-list');
+        list.innerHTML = '';
+        const history = this.state.history || [];
+        if (history.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">${this.getText('no_history')}</div>`;
+        } else {
+            history.slice(-20).reverse().forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                const date = new Date(item.time);
+                const timeStr = `${date.getHours()}:${date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()}`;
+                
+                let desc = item.desc;
+                if(item.desc === 'lottery') desc = this.getText('lottery_history');
+
+                div.innerHTML = `
+                    <div>${desc} <span class="history-time">${timeStr}</span></div>
+                    <span class="plus">+${item.amount} 🌹</span>
+                `;
+                list.appendChild(div);
             });
         }
         document.getElementById('history-modal').style.display = 'flex';
     }
 
-    setupTimers() {
-        // Heartbeat (1s)
-        this.timers.heartbeat = setInterval(() => {
-            this.isSad = Object.values(this.state.stats).some(v => v < 30);
-            const warn = document.getElementById('sad-warning');
-            warn.style.display = this.isSad ? 'block' : 'none';
-            
-            if(!this.isSad) {
-                this.state.totalTimeSec++;
-                this.updateGrowth();
-                this.checkUnlock();
-            } else {
-                this.setPet('idle'); 
-            }
-            this.renderTime();
-            this.renderGrowth();
-        }, 1000);
-
-        // Decay (10s)
-        this.timers.decay = setInterval(() => {
-            for(let k in this.state.stats) if(this.state.stats[k]>0) this.state.stats[k]--;
-            this.renderStats();
-            this.save();
-        }, CONSTANTS.DECAY_MS);
-
-        // Income (60s)
-        this.timers.income = setInterval(() => {
-            this.state.points += 5;
-            // No float for passive income to avoid spam/glitch
-            this.renderPoints();
-        }, CONSTANTS.INCOME_MS);
-
-        // Lottery Button Check (1s)
-        this.timers.lottery = setInterval(() => this.updateLotteryBtn(), 1000);
+    addToHistory(type, amount, desc, unit = '🌹') {
+        if (!this.state.history) this.state.history = [];
+        this.state.history.push({
+            type: type,
+            amount: amount,
+            desc: desc,
+            unit: unit,
+            time: Date.now()
+        });
+        if (this.state.history.length > 50) this.state.history.shift();
     }
 
-    checkUnlock() {
-        const m = this.state.totalTimeSec/60;
-        ACHIEVEMENTS.forEach(a => {
-            if(m >= a.timeMin && !this.state.unlockedItems.includes(a.id)) {
-                this.state.unlockedItems.push(a.id);
-                this.showNotify(`🏆 ${this.getText(a.name_key)}`);
-                this.updateWidget();
+    setupTimers() {
+        setInterval(() => {
+            const warningEl = document.getElementById('sad-warning');
+            this.isSad = this.checkLowStats();
+
+            if (this.isSad) {
+                warningEl.style.display = 'block';
+                this.state.lastLottery += 1000; 
+            } else {
+                warningEl.style.display = 'none';
+                this.state.totalTimeSec++; 
+                this.updateGrowthStage(); 
+                this.checkAchievements();
+            }
+            this.renderTime();
+            this.renderGrowth(); 
+        }, 1000);
+
+        setInterval(() => {
+            const s = this.state.stats;
+            if(s.hunger > 0) s.hunger--;
+            if(s.hygiene > 0) s.hygiene--;
+            if(s.mood > 0) s.mood--;
+            if(s.knowledge > 0) s.knowledge--;
+            
+            const currentlySad = this.checkLowStats();
+            if (!this.animTimer && currentlySad !== this.isSad) {
+                this.setPetState('idle'); 
+            }
+            this.renderStats();
+        }, CONSTANTS.DECAY_RATE_MS);
+
+        setInterval(() => {
+            this.state.points += 5;
+            this.showToast("+5 🌹", null, null, 'gain');
+            this.renderPoints();
+            this.saveData();
+        }, CONSTANTS.PASSIVE_INCOME_MS);
+
+        setInterval(() => this.updateLotteryButton(), 1000);
+        setInterval(() => this.saveData(), 5000);
+    }
+
+    checkAchievements() {
+        const currentMin = this.state.totalTimeSec / 60;
+        let newUnlock = false;
+        ACHIEVEMENTS.forEach(item => {
+            if (currentMin >= item.timeMin && !this.state.unlockedItems.includes(item.id)) {
+                this.state.unlockedItems.push(item.id);
+                this.showToast(`🏆 ${this.getText(item.name_key)}!`, null, null, 'gain');
+                this.playSound('win');
+                newUnlock = true;
             }
         });
+        if (newUnlock) {
+            this.updateNextRewardWidget();
+            this.saveData();
+        }
     }
 
     render() {
@@ -795,152 +1351,321 @@ class Game {
     }
 
     renderGrowth() {
-        const cur = LION_STAGES[this.currentStage];
-        const nxt = LION_STAGES[this.currentStage+1];
-        
-        document.getElementById('current-stage-icon').src = cur.assets.idle;
+        const currentMins = this.state.totalTimeSec / 60;
+        const currentStageObj = LION_STAGES[this.currentStage];
+        const nextStageObj = LION_STAGES[this.currentStage + 1];
+
+        const nextIcon = document.getElementById('next-stage-icon');
+        const currentIcon = document.getElementById('current-stage-icon');
         const fill = document.getElementById('growth-fill');
-        const nIcon = document.getElementById('next-stage-icon');
-        
-        if(nxt) {
-            nIcon.src = nxt.assets.idle;
-            const pct = ((this.state.totalTimeSec/60 - cur.minMinutes)/(nxt.minMinutes - cur.minMinutes))*100;
-            fill.style.height = `${Math.min(100, Math.max(0, pct))}%`;
-        } else {
-            nIcon.src = cur.assets.idle;
+
+        if (!nextStageObj) {
             fill.style.height = '100%';
+            nextIcon.src = currentStageObj.assets.idle; 
+        } else {
+            if (currentIcon.src !== currentStageObj.assets.idle) currentIcon.src = currentStageObj.assets.idle;
+            if (nextIcon.src !== nextStageObj.assets.idle) nextIcon.src = nextStageObj.assets.idle;
+
+            const startMins = currentStageObj.minMinutes;
+            const targetMins = nextStageObj.minMinutes;
+            const progress = ((currentMins - startMins) / (targetMins - startMins)) * 100;
+            fill.style.height = `${Math.min(100, Math.max(0, progress))}%`;
         }
-        this.updateWidget();
+        this.updateNextRewardWidget();
     }
 
     renderStats() {
-        ['hunger','hygiene','mood','knowledge'].forEach(k => {
-            const v = this.state.stats[k];
-            const bar = document.getElementById(`bar-${k}`);
-            document.getElementById(`val-${k}`).innerText = v+"%";
-            bar.style.width = v+"%";
-            bar.style.backgroundColor = v>60 ? 'var(--success-green)' : (v>30?'var(--accent-orange)':'var(--danger-red)');
+        ['hunger', 'hygiene', 'mood', 'knowledge'].forEach(key => {
+            const val = this.state.stats[key];
+            const bar = document.getElementById(`bar-${key}`);
+            const text = document.getElementById(`val-${key}`);
+            bar.style.width = `${val}%`;
+            text.innerText = `${val}%`;
+            
+            if(val > 60) bar.style.backgroundColor = 'var(--success-green)';
+            else if(val > 30) bar.style.backgroundColor = 'var(--accent-orange)';
+            else bar.style.backgroundColor = 'var(--danger-red)';
         });
-        this.setPet('idle'); 
     }
 
     renderPoints() { document.getElementById('score-val').innerText = this.state.points; }
+    
     renderTime() {
-        const s = this.state.totalTimeSec;
-        document.getElementById('time-val').innerText = 
-            `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor((s%3600)/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+        const sec = this.state.totalTimeSec;
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
+        const pad = (num) => num < 10 ? '0' + num : num;
+        document.getElementById('time-val').innerText = `${pad(h)}:${pad(m)}:${pad(s)}`;
     }
 
     action(type) {
-        const map = {feed:{c:20,s:'hunger'}, bathe:{c:20,s:'hygiene'}, play:{c:30,s:'mood'}, study:{c:30,s:'knowledge'}};
-        const act = map[type];
-        if(this.state.points < act.c) { this.float(this.getText('not_enough'),null,null,'bonus'); return; }
+        const cfg = CONSTANTS.ACTIONS[type];
+        if (this.state.points < cfg.cost) {
+            this.showToast(this.getText('not_enough'), null, null, 'cost');
+            return;
+        }
         
-        this.state.points -= act.c;
-        this.state.stats[act.s] = Math.min(100, this.state.stats[act.s]+10);
-        this.float("+10", null,null,'gain');
-        this.renderStats(); this.renderPoints();
-    }
+        this.state.points -= cfg.cost;
+        this.state.stats[cfg.stat] = Math.min(100, this.state.stats[cfg.stat] + cfg.amount);
+        
+        this.setPetState(cfg.anim, cfg.duration);
+        this.playSound('action');
+        
+        setTimeout(() => {
+            this.showToast(`+${cfg.amount} ❤️`, null, null, 'gain');
+        }, 100);
 
-    setPet(state) {
-        const assets = LION_STAGES[this.currentStage].assets;
-        const img = document.getElementById('pet-image');
-        const src = (state === 'idle' && this.isSad) ? assets.sad : assets.idle;
-        if(img.src !== src) img.src = src;
-    }
-
-    // Fix: Add Touch Handling with Random Bonus
-    handleTouch(e) {
-        let cx = e.clientX, cy = e.clientY;
-        if(e.touches && e.touches.length > 0) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
-
-        this.state.points++;
-        this.float("+1 🌹", cx, cy, 'gain');
+        this.renderStats();
         this.renderPoints();
+    }
 
-        // 5% Chance for Time Bonus
-        if(Math.random() > 0.95) {
-            const bonusSec = 60;
-            this.state.totalTimeSec += bonusSec;
-            // Fix: Correctly replace placeholder string
-            const msg = this.getText('bonus_msg').replace('{sec}', bonusSec);
-            this.showNotify(msg);
-            this.float("+60s ⏳", cx, cy-50, 'bonus');
+    setPetState(stateKey, duration = 0) {
+        const petImg = document.getElementById('pet-image');
+        const currentAssets = this.getCurrentAssets();
+        let target = currentAssets[stateKey];
+        
+        this.isSad = this.checkLowStats();
+        if (stateKey === 'idle' && this.isSad) {
+            target = currentAssets.sad;
+        }
+        
+        if (petImg.src !== target) {
+            petImg.src = target;
+        }
+        
+        if (this.animTimer) clearTimeout(this.animTimer);
+        if (duration > 0) {
+            this.animTimer = setTimeout(() => {
+                this.setPetState('idle');
+                this.animTimer = null;
+            }, duration);
         }
     }
 
-    float(txt, x, y, type) {
-        const d = document.createElement('div');
-        d.className = `floater ${type}`;
-        d.innerText = txt;
-        d.style.left = (x||window.innerWidth/2)+'px';
-        d.style.top = (y||window.innerHeight/2)+'px';
-        document.body.appendChild(d);
-        setTimeout(()=>d.remove(),1000);
+    checkLowStats() {
+        const s = this.state.stats;
+        return (s.hunger < 30 || s.hygiene < 30 || s.mood < 30 || s.knowledge < 30);
+    }
+
+    handleTouch(e) {
+        let clientX = null, clientY = null;
+        if (e) {
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else if (e.clientX) {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+        }
+
+        let pointsEarned = 1;
+        this.state.points += 1;
+        this.setPetState('touch', 1000);
+        this.showToast("+1 🌹", clientX, clientY, 'gain');
+
+        const bonusChance = Math.random();
+        if(bonusChance > 0.98) {
+            const bonusSec = Math.floor(Math.random() * 120) + 1;
+            this.state.totalTimeSec += bonusSec;
+            
+            const msg = this.getText('bonus_msg').replace('{sec}', bonusSec);
+            this.showNotification(msg);
+            
+            this.playSound('win');
+            this.renderTime();
+            this.renderGrowth();
+        }
+
+        this.renderPoints();
     }
 
     playLottery() {
-        if(Date.now() - this.state.lastLottery < CONSTANTS.LOTTERY_CD) return;
+        if (this.isSad) {
+            alert(this.getText('warning_sad'));
+            return;
+        }
+        const now = Date.now();
+        const diff = now - this.state.lastLottery;
+        if (diff < CONSTANTS.LOTTERY_COOLDOWN) return;
+
+        this.drawLotteryGrid();
+        document.getElementById('lottery-modal').style.display = 'flex';
+        document.getElementById('lottery-status').innerText = this.getText('spinning');
+
+        const rand = Math.random();
+        let winningIndex = 0; 
+
+        if (rand > 0.99) winningIndex = 0; 
+        else if (rand > 0.96) winningIndex = 1; 
+        else if (rand > 0.90) winningIndex = 2; 
+        else if (rand > 0.80) winningIndex = 3; 
+        else if (rand > 0.70) winningIndex = 5; 
+        else if (rand > 0.50) winningIndex = 6; 
+        else winningIndex = 8; 
+
+        this.runLotteryAnimation(winningIndex);
+        
+        this.state.lastLottery = now;
+        this.saveData();
+    }
+
+    drawLotteryGrid() {
         const grid = document.getElementById('lottery-grid');
         grid.innerHTML = '';
-        LOTTERY_ITEMS.forEach((i,idx) => {
-            grid.innerHTML += `<div class="lottery-item" id="lc-${idx}">${i.s}</div>`;
+        LOTTERY_ITEMS.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'lottery-item';
+            div.id = `lottery-cell-${index}`;
+            div.innerText = item.text;
+            if(index === 4) div.innerText = "🦁"; 
+            grid.appendChild(div);
         });
-        document.getElementById('lottery-modal').style.display = 'flex';
+    }
+
+    runLotteryAnimation(targetIndex) {
+        let currentSeq = 0;
+        let speed = 50; 
+        let rounds = 0;
+        const totalRounds = 4; 
         
-        let seq = 0, rounds = 0, target = Math.floor(Math.random()*8); 
-        const run = () => {
-            document.querySelectorAll('.lottery-item').forEach(e=>e.classList.remove('active'));
-            const idx = LOTTERY_SEQ[seq];
-            document.getElementById(`lc-${idx}`).classList.add('active');
-            seq = (seq+1)%8;
-            if(seq===0) rounds++;
-            if(rounds>3 && LOTTERY_SEQ[seq]===target) {
-                setTimeout(()=>this.winLottery(target), 500);
-            } else setTimeout(run, rounds>3?200:50);
+        const tick = () => {
+            const cellIdx = LOTTERY_SEQUENCE[currentSeq];
+            document.querySelectorAll('.lottery-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`lottery-cell-${cellIdx}`).classList.add('active');
+
+            currentSeq++;
+            if (currentSeq >= LOTTERY_SEQUENCE.length) {
+                currentSeq = 0;
+                rounds++;
+            }
+
+            if (rounds >= totalRounds) {
+                const dist = (LOTTERY_SEQUENCE.indexOf(targetIndex) - (currentSeq - 1) + 8) % 8;
+                if(dist < 5) speed += 100;
+                
+                if (LOTTERY_SEQUENCE[currentSeq === 0 ? 7 : currentSeq - 1] === targetIndex) {
+                    setTimeout(() => this.showLotteryResult(targetIndex), 1000);
+                    return;
+                }
+            }
+            setTimeout(tick, speed);
         };
-        run();
+        tick();
     }
 
-    winLottery(idx) {
+    // UPDATED: Show clear reward icon and text
+    showLotteryResult(index) {
         document.getElementById('lottery-modal').style.display = 'none';
-        const item = LOTTERY_ITEMS[idx];
-        let msg = "";
-        if(item.t === 'p') { this.state.points += item.v; msg = `+${item.v} 🌹`; }
-        if(item.t === 't') { this.state.totalTimeSec += item.v*60; msg = `+${item.v}m ⏳`; }
+        const item = LOTTERY_ITEMS[index];
+        const resContainer = document.getElementById('lottery-result-content');
         
-        this.state.lastLottery = Date.now();
-        document.getElementById('lottery-win-text').innerText = msg;
+        let htmlContent = "";
+
+        if(item.type === 'point') {
+            this.state.points += item.val;
+            this.addToHistory('lottery', item.val, 'lottery', '🌹');
+            
+            htmlContent = `
+                <div class="lottery-res-icon">🌹</div>
+                <div class="lottery-res-val">+${item.val}</div>
+                <div class="lottery-res-label">${this.getText('reward_points_title')}</div>
+            `;
+            
+        } else if (item.type === 'time') {
+            this.state.totalTimeSec += (item.val * 60); 
+            this.addToHistory('lottery', item.val + 'm', 'lottery', '⏳');
+            this.renderTime(); 
+            this.renderGrowth();
+            
+            htmlContent = `
+                <div class="lottery-res-icon">⏳</div>
+                <div class="lottery-res-val">+${item.val} ${this.getText('min')}</div>
+                <div class="lottery-res-label">${this.getText('reward_time_title')}</div>
+            `;
+        }
+
+        resContainer.innerHTML = htmlContent;
         document.getElementById('lottery-result-modal').style.display = 'flex';
-        this.state.history.push({desc:'Lottery', amt:item.s});
-        this.save();
-        this.render();
+        this.renderPoints();
+        this.saveData();
     }
 
-    updateLotteryBtn() {
+    updateLotteryButton() {
         const btn = document.getElementById('btn-lottery');
-        const diff = Date.now() - this.state.lastLottery;
-        if(diff < CONSTANTS.LOTTERY_CD) {
-            const left = Math.ceil((CONSTANTS.LOTTERY_CD - diff)/1000);
-            btn.innerText = `⏳ ${Math.floor(left/60)}:${(left%60).toString().padStart(2,'0')}`;
+        const now = Date.now();
+        const diff = now - this.state.lastLottery;
+        
+        if (diff < CONSTANTS.LOTTERY_COOLDOWN) {
+            const secLeft = Math.ceil((CONSTANTS.LOTTERY_COOLDOWN - diff) / 1000);
+            const m = Math.floor(secLeft / 60);
+            const s = secLeft % 60;
+            btn.innerText = `⏳ ${m}:${s < 10 ? '0'+s : s}`;
             btn.disabled = true;
         } else {
-            btn.innerHTML = `🎁 ${this.getText('btn_lottery')}`;
-            btn.disabled = false;
+            if(this.isSad) {
+                btn.innerText = `⛔ ${this.getText('btn_sad')}`;
+                btn.disabled = true;
+            } else {
+                btn.innerText = `🎁 ${this.getText('btn_lottery')}`;
+                btn.disabled = false;
+            }
         }
     }
 
-    save() { localStorage.setItem('lionRamadanV3', JSON.stringify(this.state)); }
-    load() {
-        const s = localStorage.getItem('lionRamadanV3');
-        if(s) this.state = {...this.state, ...JSON.parse(s)};
+    showToast(text, x = null, y = null, type = 'normal') {
+        const el = document.createElement('div');
+        el.className = 'floater';
+        if (type === 'cost') el.classList.add('cost');
+        if (type === 'gain') el.classList.add('gain');
+        if (type === 'bonus') el.classList.add('bonus');
+        
+        el.innerText = text;
+        
+        if (x !== null && y !== null) {
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+        } else {
+            el.style.left = '50%';
+            el.style.top = '40%';
+            el.style.transform = 'translate(-50%, -50%)';
+        }
+
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1000);
+    }
+    
+    checkBackground() {
+        const h = new Date().getHours();
+        const color = (h >= 19 || h < 6) ? '#2c3e50' : '#E3F2FD'; 
+        document.body.style.backgroundColor = color;
+    }
+
+    playSound(type) { console.log("Sound:", type); }
+
+    saveData() { localStorage.setItem('lionRamadanV2', JSON.stringify(this.state)); }
+
+    loadData() {
+        const saved = localStorage.getItem('lionRamadanV2');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            this.state = { ...this.state, ...parsed };
+            if(!this.state.unlockedItems) this.state.unlockedItems = [];
+            if(!this.state.totalTimeSec) this.state.totalTimeSec = 0;
+            if(!this.state.history) this.state.history = [];
+            if(!this.state.lang) this.state.lang = 'en';
+        } else {
+            this.state.lastLottery = Date.now();
+        }
     }
 }
 
 const game = new Game();
 window.onload = () => {
     game.init();
-    document.getElementById('pet-image').addEventListener('pointerdown', (e) => game.handleTouch(e));
+    const img = document.getElementById('pet-image');
+    img.addEventListener('pointerdown', (e) => game.handleTouch(e));
 };
 </script>
 </body>
