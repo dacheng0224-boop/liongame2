@@ -426,7 +426,6 @@
             border: 2px solid #eee; position: relative; z-index: 1;
             opacity: 0.6; filter: grayscale(100%); transition: all 0.3s;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            /* Increased height to fit duration text clearly */
             min-height: 140px; 
             justify-content: space-between;
         }
@@ -448,7 +447,6 @@
             line-height: 1.2; text-align: center; margin-bottom: 4px;
         }
         
-        /* New Styles for Status and Requirement */
         .t-status-pill {
             font-size: 0.55rem; padding: 2px 6px; border-radius: 8px;
             background: #eee; color: #999; margin-bottom: 4px; font-weight: bold;
@@ -493,7 +491,6 @@
             transform: scale(1.05); z-index: 10;
         }
         
-        /* New Lottery Result Styles */
         .lottery-res-icon { font-size: 3.5rem; margin-bottom: 10px; display: block; }
         .lottery-res-val { font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); line-height: 1.2; }
         .lottery-res-label { font-size: 0.9rem; color: #888; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
@@ -705,16 +702,11 @@
         </div>
     </div>
 
-    <!-- UPDATED LOTTERY RESULT MODAL -->
     <div id="lottery-result-modal" class="modal-overlay">
         <div class="modal-content" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="game.closeModal('lottery-result-modal')">&times;</span>
             <div class="modal-title" data-key="congrats">Congratulations!</div>
-            
-            <div id="lottery-result-content" style="margin: 20px 0;">
-                <!-- Content injected via JS -->
-            </div>
-
+            <div id="lottery-result-content" style="margin: 20px 0;"></div>
             <button class="btn-lottery" onclick="game.closeModal('lottery-result-modal')" data-key="awesome">Awesome!</button>
         </div>
     </div>
@@ -735,12 +727,11 @@ const TRANSLATIONS = {
         modal_lottery: "🎁 Lucky Draw", spinning: "Spinning...",
         congrats: "Congratulations!", awesome: "Awesome!",
         
-        // UPDATED KEYS
         reward_points_title: "Points Added", 
         reward_time_title: "Growth Speedup",
         unlocked: "Unlocked",
         locked: "Locked",
-        timeline_req: "Goal: {val}", // For displaying requirement in timeline
+        timeline_req: "Goal: {val}", 
 
         bonus_msg: "✨ Surprise! Growth +{sec}s!",
         not_enough: "Not enough points!",
@@ -779,7 +770,6 @@ const TRANSLATIONS = {
         modal_lottery: "🎁 幸运抽奖", spinning: "抽奖中...",
         congrats: "恭喜中奖!", awesome: "太棒了!",
         
-        // UPDATED KEYS
         reward_points_title: "获得积分",
         reward_time_title: "成长加速",
         unlocked: "已解锁",
@@ -1046,6 +1036,7 @@ class Game {
         this.currentStage = 0; 
         this.notificationTimer = null;
         this.translations = TRANSLATIONS.en;
+        this.audioCtx = null;
     }
 
     init() {
@@ -1058,6 +1049,47 @@ class Game {
         this.render();
         this.setPetState('idle');
         this.checkBackground();
+        
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+            this.audioCtx = new AudioContext();
+        }
+    }
+    
+    // UPDATED: Cuter "Bubble/Water Drop" Sound
+    playPopSound() {
+        if (!this.audioCtx) return;
+        if (this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+        }
+
+        try {
+            const osc = this.audioCtx.createOscillator();
+            const gainNode = this.audioCtx.createGain();
+            
+            osc.connect(gainNode);
+            gainNode.connect(this.audioCtx.destination);
+            
+            // "Bubble" / "Water Drop" Effect
+            // Use Sine wave for smoothness
+            osc.type = 'sine';
+            const now = this.audioCtx.currentTime;
+            
+            // Frequency Sweep UP (Low to High = Cheerful/Bubble)
+            // Start at 400Hz, go to 900Hz very quickly
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.exponentialRampToValueAtTime(900, now + 0.1);
+            
+            // Volume Envelope: Quick attack, quick decay (Bloop)
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.3, now + 0.02); // Quick fade in to avoid clicking
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1); // Fade out
+            
+            osc.start(now);
+            osc.stop(now + 0.1);
+        } catch (e) {
+            console.log("Audio play error", e);
+        }
     }
 
     setLanguage(lang) {
@@ -1150,7 +1182,6 @@ class Game {
         }
     }
 
-    // UPDATED: Show timeline with requirements clearly
     showTimeline() {
         const modal = document.getElementById('timeline-modal');
         const container = document.getElementById('timeline-container');
@@ -1175,7 +1206,6 @@ class Game {
             const name = this.getText(item.name);
             const timeText = this.formatTimeReq(item.time);
             
-            // Format requirement string (e.g. "Goal: 30m")
             const reqLabel = this.getText('timeline_req').replace('{val}', timeText);
             const statusLabel = isUnlocked ? this.getText('unlocked') : this.getText('locked');
 
@@ -1333,7 +1363,6 @@ class Game {
             if (currentMin >= item.timeMin && !this.state.unlockedItems.includes(item.id)) {
                 this.state.unlockedItems.push(item.id);
                 this.showToast(`🏆 ${this.getText(item.name_key)}!`, null, null, 'gain');
-                this.playSound('win');
                 newUnlock = true;
             }
         });
@@ -1410,7 +1439,6 @@ class Game {
         this.state.stats[cfg.stat] = Math.min(100, this.state.stats[cfg.stat] + cfg.amount);
         
         this.setPetState(cfg.anim, cfg.duration);
-        this.playSound('action');
         
         setTimeout(() => {
             this.showToast(`+${cfg.amount} ❤️`, null, null, 'gain');
@@ -1460,6 +1488,8 @@ class Game {
             }
         }
 
+        this.playPopSound();
+
         let pointsEarned = 1;
         this.state.points += 1;
         this.setPetState('touch', 1000);
@@ -1473,7 +1503,6 @@ class Game {
             const msg = this.getText('bonus_msg').replace('{sec}', bonusSec);
             this.showNotification(msg);
             
-            this.playSound('win');
             this.renderTime();
             this.renderGrowth();
         }
@@ -1555,7 +1584,6 @@ class Game {
         tick();
     }
 
-    // UPDATED: Show clear reward icon and text
     showLotteryResult(index) {
         document.getElementById('lottery-modal').style.display = 'none';
         const item = LOTTERY_ITEMS[index];
@@ -1641,8 +1669,6 @@ class Game {
         const color = (h >= 19 || h < 6) ? '#2c3e50' : '#E3F2FD'; 
         document.body.style.backgroundColor = color;
     }
-
-    playSound(type) { console.log("Sound:", type); }
 
     saveData() { localStorage.setItem('lionRamadanV2', JSON.stringify(this.state)); }
 
